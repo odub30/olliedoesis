@@ -8,7 +8,6 @@ const projectsDirectory = path.join(process.cwd(), 'src/data/projects');
 
 export async function getProjects(): Promise<Project[]> {
   try {
-    // Check if directory exists
     if (!fs.existsSync(projectsDirectory)) {
       console.warn('Projects directory does not exist');
       return [];

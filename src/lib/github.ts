@@ -32,26 +32,21 @@ interface GitHubUser {
   following: number;
 }
 
-// Repositories to exclude from portfolio display
 const EXCLUDED_REPOS = [
   'private-config',
   'sensitive-data',
-  // Add any repos you don't want displayed
 ];
 
-// GitHub API base configuration
 const GITHUB_API_BASE = 'https://api.github.com';
 const GITHUB_USERNAME = process.env.NEXT_PUBLIC_GITHUB_USERNAME;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// Headers for GitHub API requests
 const getHeaders = () => ({
   'Accept': 'application/vnd.github.v3+json',
   'User-Agent': 'Portfolio-Website',
   ...(GITHUB_TOKEN && { 'Authorization': `Bearer ${GITHUB_TOKEN}` }),
 });
 
-// Fetch user profile data
 export async function getGitHubUser(): Promise<GitHubUser | null> {
   if (!GITHUB_USERNAME) {
     console.error('GitHub username not configured');
@@ -75,7 +70,6 @@ export async function getGitHubUser(): Promise<GitHubUser | null> {
   }
 }
 
-// Fetch public repositories
 export async function getGitHubRepos(): Promise<GitHubRepo[]> {
   if (!GITHUB_USERNAME) {
     console.error('GitHub username not configured');

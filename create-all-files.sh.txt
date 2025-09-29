@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Portfolio Files Creation Script
+# Creates all necessary files for GitHub integration, navigation, layout, hero, and projects
+
+set -e
+
+echo "🚀 Creating Portfolio Files..."
+echo "================================"
+
+# Change to project directory
+cd /c/olliedoesis
+
+# Create directories
+echo "📁 Creating directory structure..."
+mkdir -p src/lib
+mkdir -p src/types
+mkdir -p src/hooks
+mkdir -p src/components/features/github
+mkdir -p src/components/features/projects
+mkdir -p src/components/layout
+mkdir -p src/components/sections
+mkdir -p src/components/ui
+
+# Create GitHub Integration Files
+echo ""
+echo "🔧 Creating GitHub integration files..."
+touch src/lib/github.ts
+touch src/types/github.ts
+touch src/hooks/useGitHub.ts
+touch src/components/features/github/RepoCard.tsx
+touch src/components/features/github/GitHubStats.tsx
+
+# Create Navigation and Layout Files
+echo "🧭 Creating navigation and layout files..."
+touch src/components/layout/Header.tsx
+touch src/components/layout/Footer.tsx
+touch src/components/layout/Navigation.tsx
+touch src/components/layout/PageContainer.tsx
+touch src/components/layout/PageHeader.tsx
+
+# Create Hero Section Files
+echo "⭐ Creating hero section files..."
+touch src/components/sections/Hero.tsx
+touch src/components/sections/HeroWithStats.tsx
+touch src/components/sections/AboutPreview.tsx
+
+# Create Projects Files
+echo "📦 Creating projects files..."
+touch src/types/project.ts
+touch src/lib/projects.ts
+touch src/components/features/projects/ProjectCard.tsx
+touch src/components/sections/ProjectsPreview.tsx
+
+# Create UI Components
+echo "🎨 Creating UI component files..."
+touch src/components/ui/Button.tsx
+touch src/components/ui/Card.tsx
+
+# Create placeholder image directory
+echo "🖼️ Creating image directories..."
+mkdir -p public/images/projects
+mkdir -p public/images/og
+
+# Create a placeholder image (using a simple SVG)
+cat > public/images/projects/placeholder.png.svg << 'EOF'
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <rect width="800" height="600" fill="#f3f4f6"/>
+  <text x="50%" y="50%" font-family="Arial" font-size="24" fill="#9ca3af" text-anchor="middle">
+    Project Screenshot
+  </text>
+</svg>
+EOF
+
+# List all created files
+echo ""
+echo "✅ Files created successfully!"
+echo ""
+echo "📋 Created Files:"
+echo "----------------"
+echo ""
+echo "GitHub Integration:"
+echo "  ✓ src/lib/github.ts"
+echo "  ✓ src/types/github.ts"
+echo "  ✓ src/hooks/useGitHub.ts"
+echo "  ✓ src/components/features/github/RepoCard.tsx"
+echo "  ✓ src/components/features/github/GitHubStats.tsx"
+echo ""
+echo "Navigation & Layout:"
+echo "  ✓ src/components/layout/Header.tsx"
+echo "  ✓ src/components/layout/Footer.tsx"
+echo "  ✓ src/components/layout/Navigation.tsx"
+echo "  ✓ src/components/layout/PageContainer.tsx"
+echo "  ✓ src/components/layout/PageHeader.tsx"
+echo ""
+echo "Hero Section:"
+echo "  ✓ src/components/sections/Hero.tsx"
+echo "  ✓ src/components/sections/HeroWithStats.tsx"
+echo "  ✓ src/components/sections/AboutPreview.tsx"
+echo ""
+echo "Projects:"
+echo "  ✓ src/types/project.ts"
+echo "  ✓ src/lib/projects.ts"
+echo "  ✓ src/components/features/projects/ProjectCard.tsx"
+echo "  ✓ src/components/sections/ProjectsPreview.tsx"
+echo ""
+echo "UI Components:"
+echo "  ✓ src/components/ui/Button.tsx"
+echo "  ✓ src/components/ui/Card.tsx"
+echo ""
+echo "🎯 Next Steps:"
+echo "1. Copy code from artifacts into each file"
+echo "2. Update .env.local with your GitHub credentials"
+echo "3. Update personal information in components"
+echo "4. Run 'npm run dev' to test"
+echo ""
+echo "📝 Priority Order for Populating Files:"
+echo "1. GitHub Integration (lib/github.ts, types/github.ts)"
+echo "2. Layout (Header.tsx, Footer.tsx)"
+echo "3. Hero Section (Hero.tsx)"
+echo "4. Projects (project types, ProjectCard.tsx)"
+echo ""
+echo "Happy coding! 🚀"

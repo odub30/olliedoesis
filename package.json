@@ -12,6 +12,7 @@
     "clean": "rm -rf .next out"
   },
   "dependencies": {
+    "@vercel/speed-insights": "^1.2.0",
     "framer-motion": "^12.23.22",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.544.0",

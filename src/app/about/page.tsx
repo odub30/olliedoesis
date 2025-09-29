@@ -2,13 +2,6 @@
 import { Code, Shield, Laptop, BookOpen, Award, MapPin } from 'lucide-react';
 
 export default function AboutPage() {
-  const skills = [
-    { category: 'Frontend', items: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'JavaScript'] },
-    { category: 'Backend', items: ['Node.js', 'Python', 'Express', 'REST APIs', 'Database Design'] },
-    { category: 'Cybersecurity', items: ['Network Security', 'Penetration Testing', 'Risk Assessment', 'Security Auditing'] },
-    { category: 'Tools', items: ['Git', 'VS Code', 'Linux', 'Docker', 'Figma'] },
-  ];
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
@@ -27,7 +20,7 @@ export default function AboutPage() {
         <section className="mb-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Hi, I'm Ollie! 👋</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">Hi, I'm Ollie!</h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
                   I'm a web developer with a passion for cybersecurity, combining creativity with 
@@ -50,7 +43,7 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <MapPin className="h-5 w-5 text-blue-600" />
-                  <span className="text-gray-700">Based in Henderson NV</span>
+                  <span className="text-gray-700">Based in Henderson, Nevada</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Code className="h-5 w-5 text-blue-600" />
@@ -73,102 +66,120 @@ export default function AboutPage() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Skills & Technologies</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {skills.map((skillGroup, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center">
-                  {skillGroup.category === 'Frontend' && <Laptop className="h-5 w-5 mr-2 text-blue-600" />}
-                  {skillGroup.category === 'Backend' && <Code className="h-5 w-5 mr-2 text-green-600" />}
-                  {skillGroup.category === 'Cybersecurity' && <Shield className="h-5 w-5 mr-2 text-red-600" />}
-                  {skillGroup.category === 'Tools' && <Award className="h-5 w-5 mr-2 text-purple-600" />}
-                  {skillGroup.category}
-                </h3>
-                <ul className="space-y-2">
-                  {skillGroup.items.map((skill, skillIndex) => (
-                    <li key={skillIndex} className="text-gray-600 text-sm">{skill}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Education & Experience */}
-        <section className="mb-16">
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Education */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Education</h2>
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="font-semibold text-lg text-gray-800">Cybersecurity Studies</h3>
-                  <p className="text-blue-600 font-medium">Comptia Security Plus</p>
-                  <p className="text-gray-500 text-sm mb-3">2024 - Present</p>
-                  <p className="text-gray-600 text-sm">
-                    Focusing on network security, ethical hacking, risk management, and digital forensics.
-                  </p>
-                </div>
-                
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="font-semibold text-lg text-gray-800">Self-Taught Development</h3>
-                  <p className="text-blue-600 font-medium">Online Learning & Projects</p>
-                  <p className="text-gray-500 text-sm mb-3">Ongoing</p>
-                  <p className="text-gray-600 text-sm">
-                    Continuously learning through courses, documentation, and hands-on projects.
-                  </p>
-                </div>
-              </div>
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                <Laptop className="h-5 w-5 mr-2 text-blue-600" />
+                Frontend
+              </h3>
+              <ul className="space-y-2">
+                <li className="text-gray-600 text-sm">React</li>
+                <li className="text-gray-600 text-sm">Next.js</li>
+                <li className="text-gray-600 text-sm">TypeScript</li>
+                <li className="text-gray-600 text-sm">Tailwind CSS</li>
+                <li className="text-gray-600 text-sm">JavaScript</li>
+              </ul>
             </div>
-
-            {/* Experience */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Experience</h2>
-              <div className="space-y-6">
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="font-semibold text-lg text-gray-800">Web Development Projects</h3>
-                  <p className="text-blue-600 font-medium">Personal & Client Work</p>
-                  <p className="text-gray-500 text-sm mb-3">2024 - Present</p>
-                  <p className="text-gray-600 text-sm">
-                    Building responsive web applications using modern frameworks and best practices.
-                  </p>
-                </div>
-                
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="font-semibold text-lg text-gray-800">Security Research</h3>
-                  <p className="text-blue-600 font-medium">Academic & Personal Projects</p>
-                  <p className="text-gray-500 text-sm mb-3">2024 - Present</p>
-                  <p className="text-gray-600 text-sm">
-                    Conducting security assessments and staying current with cybersecurity trends.
-                  </p>
-                </div>
-              </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                <Code className="h-5 w-5 mr-2 text-green-600" />
+                Backend
+              </h3>
+              <ul className="space-y-2">
+                <li className="text-gray-600 text-sm">Node.js</li>
+                <li className="text-gray-600 text-sm">Python</li>
+                <li className="text-gray-600 text-sm">Express</li>
+                <li className="text-gray-600 text-sm">REST APIs</li>
+                <li className="text-gray-600 text-sm">Database Design</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2 text-red-600" />
+                Cybersecurity
+              </h3>
+              <ul className="space-y-2">
+                <li className="text-gray-600 text-sm">Network Security</li>
+                <li className="text-gray-600 text-sm">Penetration Testing</li>
+                <li className="text-gray-600 text-sm">Risk Assessment</li>
+                <li className="text-gray-600 text-sm">Security Auditing</li>
+              </ul>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <h3 className="font-semibold text-lg text-gray-800 mb-4 flex items-center">
+                <Award className="h-5 w-5 mr-2 text-purple-600" />
+                Tools
+              </h3>
+              <ul className="space-y-2">
+                <li className="text-gray-600 text-sm">Git</li>
+                <li className="text-gray-600 text-sm">VS Code</li>
+                <li className="text-gray-600 text-sm">Linux</li>
+                <li className="text-gray-600 text-sm">Docker</li>
+                <li className="text-gray-600 text-sm">Figma</li>
+              </ul>
             </div>
           </div>
         </section>
 
-        {/* Goals & Interests */}
-        <section className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Goals & Interests</h2>
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <Code className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800 mb-2">Full-Stack Development</h3>
-              <p className="text-gray-600 text-sm">
-                Building end-to-end web applications with modern technologies and best practices.
-              </p>
+        {/* Education & Goals */}
+        <section className="grid md:grid-cols-2 gap-12">
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Education & Learning</h2>
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800">Cybersecurity Studies</h3>
+                <p className="text-blue-600 font-medium">CompTIA Security+</p>
+                <p className="text-gray-500 text-sm mb-3">2024 - Present</p>
+                <p className="text-gray-600 text-sm">
+                  Focusing on network security, ethical hacking, risk management, and digital forensics.
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-lg text-gray-800">Self-Taught Development</h3>
+                <p className="text-blue-600 font-medium">Continuous Learning</p>
+                <p className="text-gray-500 text-sm mb-3">Ongoing</p>
+                <p className="text-gray-600 text-sm">
+                  Learning through courses, documentation, and hands-on projects.
+                </p>
+              </div>
             </div>
-            <div>
-              <Shield className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800 mb-2">Cybersecurity Career</h3>
-              <p className="text-gray-600 text-sm">
-                Pursuing a career in cybersecurity to help protect organizations and individuals.
-              </p>
-            </div>
-            <div>
-              <BookOpen className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-semibold text-lg text-gray-800 mb-2">Continuous Learning</h3>
-              <p className="text-gray-600 text-sm">
-                Always exploring new technologies and staying current with industry trends.
-              </p>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Goals & Interests</h2>
+            <div className="space-y-6">
+              <div className="flex items-start space-x-3">
+                <Code className="h-6 w-6 text-blue-600 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">Full-Stack Development</h3>
+                  <p className="text-gray-600 text-sm">
+                    Building end-to-end web applications with modern technologies.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <Shield className="h-6 w-6 text-red-600 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">Cybersecurity Career</h3>
+                  <p className="text-gray-600 text-sm">
+                    Pursuing a career in cybersecurity to help protect organizations.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3">
+                <BookOpen className="h-6 w-6 text-green-600 mt-1" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">Continuous Learning</h3>
+                  <p className="text-gray-600 text-sm">
+                    Always exploring new technologies and industry trends.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

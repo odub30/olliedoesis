@@ -23,7 +23,7 @@ export function AboutPreview() {
             
             <div className="prose prose-lg text-gray-600 mb-8">
               <p>
-                I'm a passionate web developer with a strong focus on creating secure, 
+                I&apos;m a passionate web developer with a strong focus on creating secure, 
                 user-friendly applications. My journey started with curiosity about how 
                 websites work, and has evolved into a deep appreciation for both the 
                 creative and technical aspects of web development.
@@ -31,7 +31,7 @@ export function AboutPreview() {
               
               <p>
                 Currently focusing on modern JavaScript frameworks, cybersecurity practices, 
-                and building applications that make a difference in people's lives.
+                and building applications that make a difference in people&apos;s lives.
               </p>
             </div>
 

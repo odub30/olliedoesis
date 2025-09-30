@@ -98,7 +98,7 @@ export function Hero() {
         {/* Main Heading */}
         <div className="mb-8">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-4">
-            Hi, I'm{' '}
+            Hi, I&apos;m{' '}
             <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
               Your Name
             </span>
@@ -106,7 +106,7 @@ export function Hero() {
           
           {/* Animated Role */}
           <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-700 mb-2 h-12 flex items-center justify-center">
-            I'm a{' '}
+            I&apos;m a{' '}
             <span className="ml-3 text-blue-600 relative">
               {displayText}
               <span className="animate-pulse">|</span>

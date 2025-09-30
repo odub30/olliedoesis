@@ -13,7 +13,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
-              Hi, I'm{' '}
+              Hi, I&apos;m{' '}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Ollie
               </span>
@@ -89,7 +89,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Featured Project</h2>
-            <p className="text-xl text-gray-600">Here's what I've been working on recently</p>
+            <p className="text-xl text-gray-600">Here&apos;s what I&apos;ve been working on recently</p>
           </div>
           
           <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
@@ -151,10 +151,10 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Let's Build Something Together</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Let&apos;s Build Something Together</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            I'm always interested in new opportunities and collaborations. 
-            Let's discuss your next project!
+            I&apos;m always interested in new opportunities and collaborations. 
+            Let&apos;s discuss your next project!
           </p>
           <Link 
             href="/contact"

@@ -20,10 +20,10 @@ export default function AboutPage() {
         <section className="mb-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Hi, I'm Ollie!</h2>
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">Hi, I&apos;m Ollie!</h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
-                  I'm a web developer with a passion for cybersecurity, combining creativity with 
+                  I&apos;m a web developer with a passion for cybersecurity, combining creativity with 
                   security-first thinking to build robust digital solutions. Currently pursuing my 
                   studies in cybersecurity while developing modern web applications.
                 </p>
@@ -33,7 +33,7 @@ export default function AboutPage() {
                   aspects of the digital world and decided to specialize in cybersecurity as well.
                 </p>
                 <p>
-                  When I'm not coding or studying security protocols, you can find me exploring new 
+                  When I&apos;m not coding or studying security protocols, you can find me exploring new 
                   technologies, contributing to open source projects, or learning about the latest 
                   cybersecurity threats and defenses.
                 </p>

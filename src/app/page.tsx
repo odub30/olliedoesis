@@ -2,81 +2,139 @@
 "use client";
 
 import Link from 'next/link';
-import { ArrowRight, Code, Shield, Laptop, Github, ExternalLink } from 'lucide-react';
+import { ArrowRight, Code, Shield, Laptop, Github, ExternalLink, Sparkles, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function HomePage() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      
+    <div className="min-h-screen bg-background">
+
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-grid opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+
+        {/* Floating Elements */}
+        <div className="absolute top-1/4 left-10 w-32 h-32 bg-primary/10 rounded-full blur-xl animate-bounce-soft" />
+        <div className="absolute top-3/4 right-10 w-24 h-24 bg-accent/10 rounded-full blur-xl animate-bounce-soft delay-1000" />
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-primary/20 rounded-full blur-lg animate-pulse" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 lg:pt-32 lg:pb-24">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
-              Hi, I&apos;m{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Ollie
-              </span>
-            </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Web Developer & Cybersecurity Student building secure, modern digital experiences
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link 
+            {/* Status Badge */}
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 text-success-600 text-sm font-medium mb-8 transition-all duration-700 ${mounted ? 'animate-slide-down' : 'opacity-0'}`}>
+              <div className="w-2 h-2 bg-success-500 rounded-full animate-pulse" />
+              Available for opportunities
+            </div>
+
+            {/* Main Heading */}
+            <div className={`transition-all duration-700 delay-200 ${mounted ? 'animate-slide-up' : 'opacity-0'}`}>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 tracking-tight">
+                <span className="text-foreground">Hi, I&apos;m </span>
+                <span className="relative inline-block">
+                  <span className="bg-gradient-to-r from-primary-500 via-primary-600 to-accent-600 bg-clip-text text-transparent animate-gradient bg-300% bg-gradient-to-r">
+                    Ollie
+                  </span>
+                  <Sparkles className="absolute -top-8 -right-8 w-8 h-8 text-primary-400 animate-pulse" />
+                </span>
+              </h1>
+
+              <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground mb-4 max-w-4xl mx-auto leading-relaxed">
+                Web Developer & Cybersecurity Student crafting
+                <span className="text-primary-600 font-semibold"> secure</span>,
+                <span className="text-accent-600 font-semibold"> modern</span> digital experiences
+              </p>
+
+              <p className="text-base sm:text-lg text-muted-foreground/80 mb-12 max-w-2xl mx-auto">
+                Based in Henderson, Nevada • Passionate about code and cybersecurity
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 transition-all duration-700 delay-500 ${mounted ? 'animate-slide-up' : 'opacity-0'}`}>
+              <Link
                 href="/projects"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center space-x-2"
+                className="btn btn-primary px-8 py-4 text-base group hover:scale-105 hover:shadow-glow"
               >
                 <span>View My Work</span>
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link 
+              <Link
                 href="/contact"
-                className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-medium hover:border-blue-600 hover:text-blue-600 transition-all duration-300 flex items-center space-x-2"
+                className="btn btn-outline px-8 py-4 text-base group hover:scale-105"
               >
                 <span>Get In Touch</span>
               </Link>
+            </div>
+
+            {/* Quick Stats */}
+            <div className={`grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto mb-16 transition-all duration-700 delay-700 ${mounted ? 'animate-fade-in' : 'opacity-0'}`}>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-foreground mb-2">2+</div>
+                <div className="text-sm text-muted-foreground">Years Learning</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-foreground mb-2">10+</div>
+                <div className="text-sm text-muted-foreground">Projects Built</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-foreground mb-2">∞</div>
+                <div className="text-sm text-muted-foreground">Cups of Coffee</div>
+              </div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className={`transition-all duration-700 delay-1000 ${mounted ? 'animate-bounce-soft' : 'opacity-0'}`}>
+              <ChevronDown className="w-6 h-6 text-muted-foreground/60 mx-auto" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Skills Preview */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">What I Do</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">What I Do</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Combining creativity with security-first thinking to build robust digital solutions
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-8 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300">
-              <div className="bg-blue-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6">
+            <div className="group card card-hover text-center bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+              <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
                 <Code className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Web Development</h3>
-              <p className="text-gray-600">
+              <h3 className="text-2xl font-bold text-foreground mb-4">Web Development</h3>
+              <p className="text-muted-foreground">
                 Building modern, responsive web applications with React, Next.js, and TypeScript
               </p>
             </div>
-            
-            <div className="text-center p-8 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 transition-all duration-300">
-              <div className="bg-purple-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6">
+
+            <div className="group card card-hover text-center bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+              <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow-accent">
                 <Shield className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Cybersecurity</h3>
-              <p className="text-gray-600">
+              <h3 className="text-2xl font-bold text-foreground mb-4">Cybersecurity</h3>
+              <p className="text-muted-foreground">
                 Studying network security, penetration testing, and digital forensics
               </p>
             </div>
-            
-            <div className="text-center p-8 rounded-xl bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300">
-              <div className="bg-green-600 w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-6">
+
+            <div className="group card card-hover text-center bg-gradient-to-br from-success/5 to-success/10 border-success/20">
+              <div className="bg-gradient-to-br from-success-500 to-success-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <Laptop className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Full-Stack Solutions</h3>
-              <p className="text-gray-600">
+              <h3 className="text-2xl font-bold text-foreground mb-4">Full-Stack Solutions</h3>
+              <p className="text-muted-foreground">
                 End-to-end development from database design to user interface
               </p>
             </div>
@@ -85,83 +143,104 @@ export default function HomePage() {
       </section>
 
       {/* Featured Project Preview */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Featured Project</h2>
-            <p className="text-xl text-gray-600">Here&apos;s what I&apos;ve been working on recently</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Featured Project</h2>
+            <p className="text-lg text-muted-foreground">Here&apos;s what I&apos;ve been working on recently</p>
           </div>
-          
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto">
+
+          <div className="card max-w-5xl mx-auto overflow-hidden border-0 shadow-strong">
             <div className="md:flex">
-              <div className="md:w-1/2 p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">Portfolio Website</h3>
-                <p className="text-gray-600 mb-6">
-                  A modern, secure portfolio built with Next.js, featuring responsive design, 
-                  GitHub integration, and performance optimization. This site showcases my 
-                  development skills while documenting my learning journey.
-                </p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Next.js</span>
-                  <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">TypeScript</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Tailwind CSS</span>
+              <div className="md:w-1/2 p-8 lg:p-12">
+                <div className="mb-6">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-600 mb-4">
+                    ⭐ Featured
+                  </span>
+                  <h3 className="text-2xl font-bold text-foreground mb-4">Portfolio Website</h3>
+                  <p className="text-muted-foreground mb-6 leading-relaxed">
+                    A modern, secure portfolio built with Next.js, featuring responsive design,
+                    GitHub integration, and performance optimization. This site showcases my
+                    development skills while documenting my learning journey.
+                  </p>
                 </div>
-                <div className="flex space-x-4">
-                  <a 
-                    href="https://github.com/odub30/olliedoesis" 
+
+                <div className="flex flex-wrap gap-2 mb-8">
+                  <span className="px-3 py-1 bg-primary/10 text-primary-700 rounded-full text-sm font-medium">Next.js</span>
+                  <span className="px-3 py-1 bg-accent/10 text-accent-700 rounded-full text-sm font-medium">TypeScript</span>
+                  <span className="px-3 py-1 bg-success/10 text-success-700 rounded-full text-sm font-medium">Tailwind CSS</span>
+                  <span className="px-3 py-1 bg-warning/10 text-warning-700 rounded-full text-sm font-medium">Vercel</span>
+                </div>
+
+                <div className="flex space-x-6">
+                  <a
+                    href="https://github.com/odub30/olliedoesis"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                    className="btn btn-ghost text-muted-foreground hover:text-foreground"
                   >
-                    <Github className="h-5 w-5" />
+                    <Github className="h-4 w-4 mr-2" />
                     <span>View Code</span>
                   </a>
-                  <a 
-                    href="https://olliedoesis.vercel.app" 
+                  <a
+                    href="https://olliedoesis.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                    className="btn btn-ghost text-muted-foreground hover:text-foreground"
                   >
-                    <ExternalLink className="h-5 w-5" />
+                    <ExternalLink className="h-4 w-4 mr-2" />
                     <span>Live Site</span>
                   </a>
                 </div>
               </div>
-              <div className="md:w-1/2 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-8">
+
+              <div className="md:w-1/2 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 flex items-center justify-center p-8 lg:p-12">
                 <div className="text-center">
-                  <Code className="h-24 w-24 text-blue-600 mx-auto mb-4" />
-                  <p className="text-gray-600">Portfolio Screenshot Coming Soon</p>
+                  <div className="relative">
+                    <div className="w-32 h-32 bg-gradient-to-br from-primary-400 to-accent-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                      <Code className="h-16 w-16 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-success-500 rounded-full flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground font-medium">Live & Interactive</p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="text-center mt-12">
-            <Link 
+            <Link
               href="/projects"
-              className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200"
+              className="btn btn-outline px-6 py-3 group"
             >
               <span>View All Projects</span>
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Let&apos;s Build Something Together</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            I&apos;m always interested in new opportunities and collaborations. 
+      <section className="relative py-20 overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 via-primary-700 to-accent-600" />
+        <div className="absolute inset-0 bg-grid opacity-10" />
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-white">Let&apos;s Build Something Together</h2>
+          <p className="text-lg text-primary-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+            I&apos;m always interested in new opportunities and collaborations.
             Let&apos;s discuss your next project!
           </p>
-          <Link 
+          <Link
             href="/contact"
-            className="bg-white text-blue-600 px-8 py-4 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300 shadow-lg inline-flex items-center space-x-2"
+            className="inline-flex items-center px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold hover:bg-primary-50 transition-all duration-300 shadow-strong hover:shadow-glow hover:scale-105 group"
           >
             <span>Start a Conversation</span>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>

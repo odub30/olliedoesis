@@ -1,14 +1,44 @@
 // src/app/projects/[slug]/page.tsx
-"use client";
+import { notFound } from 'next/navigation';
+import { getProject, getProjects } from '@/lib/projects';
+import { ProjectDetail } from '@/components/features/projects/ProjectDetail';
+import { marked } from 'marked';
 
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
+export async function generateStaticParams() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    slug: project.slug,
+  }));
+}
 
-export default function ProjectPage() {
-  return (
-    <div className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold">Project Details</h1>
-      <p className="mt-4">Project details coming soon...</p>
-    </div>
-  );
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const project = await getProject(params.slug);
+
+  if (!project) {
+    return {
+      title: 'Project Not Found',
+    };
+  }
+
+  return {
+    title: `${project.title} | Projects | Ollie Does`,
+    description: project.description,
+    openGraph: {
+      title: project.title,
+      description: project.description,
+      images: project.image ? [project.image] : [],
+    },
+  };
+}
+
+export default async function ProjectPage({ params }: { params: { slug: string } }) {
+  const project = await getProject(params.slug);
+
+  if (!project) {
+    notFound();
+  }
+
+  const htmlContent = marked(project.longDescription || '');
+
+  return <ProjectDetail project={project} htmlContent={htmlContent} />;
 }

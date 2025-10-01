@@ -40,7 +40,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  const htmlContent = marked(project.longDescription || '');
+  const htmlContent = await marked(project.longDescription || '');
 
   return <ProjectDetail project={project} htmlContent={htmlContent} />;
 }

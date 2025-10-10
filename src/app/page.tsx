@@ -109,35 +109,56 @@ export default function HomePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="group card card-hover text-center bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-              <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
+            <Link
+              href="/web-development"
+              className="group card card-hover text-center bg-gradient-to-br from-primary-50 to-primary-100/50 border-primary-200/60 hover:border-primary-400 hover:shadow-glow"
+            >
+              <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow-accent">
                 <Code className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Web Development</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Building modern, responsive web applications with React, Next.js, and TypeScript
               </p>
-            </div>
+              <span className="inline-flex items-center text-accent-600 font-medium text-sm group-hover:gap-2 transition-all">
+                Learn more
+                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
 
-            <div className="group card card-hover text-center bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
-              <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow-accent">
+            <Link
+              href="/cybersecurity"
+              className="group card card-hover text-center bg-gradient-to-br from-accent-50 to-accent-100/50 border-accent-200/60 hover:border-accent-400 hover:shadow-glow-accent"
+            >
+              <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
                 <Shield className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Cybersecurity</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Studying network security, penetration testing, and digital forensics
               </p>
-            </div>
+              <span className="inline-flex items-center text-primary-600 font-medium text-sm group-hover:gap-2 transition-all">
+                Learn more
+                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
 
-            <div className="group card card-hover text-center bg-gradient-to-br from-success/5 to-success/10 border-success/20">
-              <div className="bg-gradient-to-br from-success-500 to-success-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+            <Link
+              href="/projects"
+              className="group card card-hover text-center bg-gradient-to-br from-success/10 to-success/20 border-success/30 hover:border-success/50 hover:shadow-md"
+            >
+              <div className="bg-gradient-to-br from-success to-success/80 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <Laptop className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-foreground mb-4">Full-Stack Solutions</h3>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 End-to-end development from database design to user interface
               </p>
-            </div>
+              <span className="inline-flex items-center text-success font-medium text-sm group-hover:gap-2 transition-all">
+                View projects
+                <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
           </div>
         </div>
       </section>

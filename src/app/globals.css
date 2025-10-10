@@ -5,51 +5,105 @@
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
+  --foreground: 211 61% 10%;
 
-  /* Light mode colors */
+  /* Light mode colors - New Design System */
+  /* Primary: Dark Blue #0A1929 */
+  /* Secondary/Accent: Carolina Blue #4B9CD3 */
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 9%;
+  --card-foreground: 211 61% 10%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 9%;
-  --primary: 199 89% 48%;
+  --popover-foreground: 211 61% 10%;
+
+  /* Primary - Dark Blue */
+  --primary: 211 61% 10%;
+  --primary-50: 211 100% 97%;
+  --primary-100: 211 100% 94%;
+  --primary-200: 211 60% 85%;
+  --primary-300: 211 58% 70%;
+  --primary-400: 211 60% 45%;
+  --primary-500: 211 61% 10%;
+  --primary-600: 211 70% 8%;
+  --primary-700: 211 75% 6%;
+  --primary-800: 211 80% 4%;
+  --primary-900: 211 85% 2%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 0% 96%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 9%;
+
+  /* Accent - Carolina Blue */
+  --accent: 204 61% 56%;
+  --accent-50: 204 100% 97%;
+  --accent-100: 204 95% 90%;
+  --accent-200: 204 90% 80%;
+  --accent-300: 204 75% 70%;
+  --accent-400: 204 65% 63%;
+  --accent-500: 204 61% 56%;
+  --accent-600: 204 61% 48%;
+  --accent-700: 204 65% 40%;
+  --accent-800: 204 70% 32%;
+  --accent-900: 204 75% 24%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Secondary - Light variations */
+  --secondary: 211 50% 96%;
+  --secondary-foreground: 211 61% 10%;
+
+  /* Muted colors */
+  --muted: 211 30% 96%;
+  --muted-foreground: 211 20% 45%;
+
+  /* Success, Warning, Destructive */
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 199 89% 48%;
+
+  /* UI Elements */
+  --border: 211 30% 90%;
+  --input: 211 30% 90%;
+  --ring: 204 61% 56%;
   --radius: 0.5rem;
 }
 
 .dark {
-  --background: 0 0% 4%;
+  --background: 211 61% 10%;
   --foreground: 0 0% 98%;
 
   /* Dark mode colors */
-  --card: 0 0% 9%;
+  --card: 211 50% 12%;
   --card-foreground: 0 0% 98%;
-  --popover: 0 0% 9%;
+  --popover: 211 50% 12%;
   --popover-foreground: 0 0% 98%;
-  --primary: 199 89% 64%;
-  --primary-foreground: 0 0% 4%;
-  --secondary: 0 0% 15%;
+
+  /* Primary - Lighter in dark mode */
+  --primary: 211 45% 20%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Accent - Brighter Carolina Blue in dark mode */
+  --accent: 204 70% 65%;
+  --accent-foreground: 211 61% 10%;
+
+  /* Secondary */
+  --secondary: 211 40% 18%;
   --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 15%;
-  --muted-foreground: 0 0% 64%;
-  --accent: 0 0% 15%;
-  --accent-foreground: 0 0% 98%;
+
+  /* Muted */
+  --muted: 211 40% 18%;
+  --muted-foreground: 211 20% 70%;
+
+  /* Success, Warning, Destructive */
+  --success: 142 76% 45%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 60%;
+  --warning-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
-  --border: 0 0% 25%;
-  --input: 0 0% 25%;
-  --ring: 199 89% 64%;
+
+  /* UI Elements */
+  --border: 211 40% 25%;
+  --input: 211 40% 25%;
+  --ring: 204 70% 65%;
 }
 
 * {

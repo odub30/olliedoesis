@@ -16,11 +16,43 @@ module.exports = {
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
+          50: 'hsl(var(--primary-50))',
+          100: 'hsl(var(--primary-100))',
+          200: 'hsl(var(--primary-200))',
+          300: 'hsl(var(--primary-300))',
+          400: 'hsl(var(--primary-400))',
+          500: 'hsl(var(--primary-500))',
+          600: 'hsl(var(--primary-600))',
+          700: 'hsl(var(--primary-700))',
+          800: 'hsl(var(--primary-800))',
+          900: 'hsl(var(--primary-900))',
           foreground: 'hsl(var(--primary-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          50: 'hsl(var(--accent-50))',
+          100: 'hsl(var(--accent-100))',
+          200: 'hsl(var(--accent-200))',
+          300: 'hsl(var(--accent-300))',
+          400: 'hsl(var(--accent-400))',
+          500: 'hsl(var(--accent-500))',
+          600: 'hsl(var(--accent-600))',
+          700: 'hsl(var(--accent-700))',
+          800: 'hsl(var(--accent-800))',
+          900: 'hsl(var(--accent-900))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
@@ -29,10 +61,6 @@ module.exports = {
         muted: {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
-        },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
           DEFAULT: 'hsl(var(--popover))',

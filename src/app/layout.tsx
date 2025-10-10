@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://olliedoesis.dev'),
   title: 'Ollie Does Is - Web Developer & Cybersecurity Student',
   description: 'Portfolio of Ollie Does Is - Web Developer & Cybersecurity Student based in Henderson, Nevada',
   keywords: ['web developer', 'cybersecurity', 'portfolio', 'next.js', 'react', 'typescript'],

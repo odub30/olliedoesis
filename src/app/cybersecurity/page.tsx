@@ -190,7 +190,7 @@ export default function CybersecurityPage() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className={`group card card-hover bg-gradient-to-br from-card to-primary-50/30 border-primary-200/40 transition-all duration-500 ${
+                className={`group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 ${
                   mounted ? 'animate-fade-in' : 'opacity-0'
                 }`}
                 style={{ animationDelay: `${index * 100}ms` }}
@@ -198,14 +198,14 @@ export default function CybersecurityPage() {
                 <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-glow-accent">
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+                <h3 className="text-xl font-bold text-carolina mb-3">{service.title}</h3>
+                <p className="text-gray-300 mb-6 leading-relaxed">
                   {service.description}
                 </p>
                 <ul className="space-y-2">
                   {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-sm text-muted-foreground">
-                      <ShieldCheck className="h-4 w-4 text-accent-600 mr-2 flex-shrink-0" />
+                    <li key={idx} className="flex items-center text-sm text-gray-300">
+                      <ShieldCheck className="h-4 w-4 text-carolina mr-2 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -233,16 +233,12 @@ export default function CybersecurityPage() {
             {expertise.map((item, index) => (
               <div
                 key={index}
-                className={`group card text-center p-6 hover:shadow-glow transition-all duration-300 ${
-                  item.color === 'accent'
-                    ? 'bg-gradient-to-br from-accent-50 to-accent-100/50 border-accent-200/60 hover:border-accent-400'
-                    : 'bg-gradient-to-br from-primary-50 to-primary-100/30 border-primary-200/60 hover:border-primary-400'
-                }`}
+                className="group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-lg p-4 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 text-center"
               >
-                <div className="flex justify-center mb-3 text-foreground group-hover:scale-110 transition-transform">
+                <div className="flex justify-center mb-3 text-carolina group-hover:scale-110 transition-transform">
                   {item.icon}
                 </div>
-                <div className="font-semibold text-sm text-foreground">{item.name}</div>
+                <div className="font-semibold text-sm text-white">{item.name}</div>
               </div>
             ))}
           </div>
@@ -266,26 +262,16 @@ export default function CybersecurityPage() {
             {certifications.map((cert, index) => (
               <div
                 key={index}
-                className={`card bg-gradient-to-br ${
-                  cert.color === 'accent'
-                    ? 'from-accent-50/50 to-accent-100/30 border-accent-200/60'
-                    : 'from-primary-50/50 to-primary-100/30 border-primary-200/60'
-                }`}
+                className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <Award className={`h-8 w-8 ${
-                    cert.color === 'accent' ? 'text-accent-600' : 'text-primary-600'
-                  }`} />
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    cert.color === 'accent'
-                      ? 'bg-accent-100 text-accent-700'
-                      : 'bg-primary-100 text-primary-700'
-                  }`}>
+                  <Award className="h-8 w-8 text-carolina" />
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-carolina/20 text-carolina">
                     {cert.status}
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{cert.name}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
+                <h3 className="text-xl font-bold text-carolina mb-3">{cert.name}</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
                   {cert.description}
                 </p>
               </div>
@@ -311,10 +297,10 @@ export default function CybersecurityPage() {
             {securityPrinciples.map((principle, index) => (
               <div
                 key={index}
-                className="flex items-start space-x-3 p-6 rounded-xl bg-gradient-to-br from-card to-accent-50/20 border border-border hover:border-accent-300 transition-all duration-300 hover:shadow-md"
+                className="flex items-start space-x-3 p-6 rounded-xl bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
               >
-                <ShieldCheck className="h-6 w-6 text-accent-600 flex-shrink-0 mt-0.5" />
-                <span className="text-foreground font-medium">{principle}</span>
+                <ShieldCheck className="h-6 w-6 text-carolina flex-shrink-0 mt-0.5" />
+                <span className="text-white font-medium">{principle}</span>
               </div>
             ))}
           </div>

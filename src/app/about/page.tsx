@@ -39,23 +39,23 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-            <div className="card shadow-strong">
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <MapPin className="h-5 w-5 text-accent-600" />
-                  <span className="text-foreground">Based in Henderson, Nevada</span>
+                  <MapPin className="h-5 w-5 text-carolina" />
+                  <span className="text-white">Based in Henderson, Nevada</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Code className="h-5 w-5 text-accent-600" />
-                  <span className="text-foreground">Web Developer</span>
+                  <Code className="h-5 w-5 text-carolina" />
+                  <span className="text-white">Web Developer</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Shield className="h-5 w-5 text-accent-600" />
-                  <span className="text-foreground">Cybersecurity Student</span>
+                  <Shield className="h-5 w-5 text-carolina" />
+                  <span className="text-white">Cybersecurity Student</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <BookOpen className="h-5 w-5 text-accent-600" />
-                  <span className="text-foreground">Continuous Learner</span>
+                  <BookOpen className="h-5 w-5 text-carolina" />
+                  <span className="text-white">Continuous Learner</span>
                 </div>
               </div>
             </div>
@@ -66,86 +66,86 @@ export default function AboutPage() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Skills & Technologies</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="card card-hover bg-gradient-to-br from-accent-50/50 to-accent-100/30 border-accent-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Laptop className="h-5 w-5 mr-2 text-accent-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Laptop className="h-5 w-5 mr-2 text-carolina" />
                 Frontend
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">React</li>
-                <li className="text-muted-foreground text-sm">Next.js</li>
-                <li className="text-muted-foreground text-sm">TypeScript</li>
-                <li className="text-muted-foreground text-sm">Tailwind CSS</li>
-                <li className="text-muted-foreground text-sm">JavaScript</li>
+                <li className="text-gray-300 text-sm">React</li>
+                <li className="text-gray-300 text-sm">Next.js</li>
+                <li className="text-gray-300 text-sm">TypeScript</li>
+                <li className="text-gray-300 text-sm">Tailwind CSS</li>
+                <li className="text-gray-300 text-sm">JavaScript</li>
               </ul>
             </div>
 
-            <div className="card card-hover bg-gradient-to-br from-primary-50/50 to-primary-100/30 border-primary-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Code className="h-5 w-5 mr-2 text-primary-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Code className="h-5 w-5 mr-2 text-carolina" />
                 Backend
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">Node.js</li>
-                <li className="text-muted-foreground text-sm">Python</li>
-                <li className="text-muted-foreground text-sm">Express</li>
-                <li className="text-muted-foreground text-sm">REST APIs</li>
-                <li className="text-muted-foreground text-sm">Database Design</li>
+                <li className="text-gray-300 text-sm">Node.js</li>
+                <li className="text-gray-300 text-sm">Python</li>
+                <li className="text-gray-300 text-sm">Express</li>
+                <li className="text-gray-300 text-sm">REST APIs</li>
+                <li className="text-gray-300 text-sm">Database Design</li>
               </ul>
             </div>
 
-            <div className="card card-hover bg-gradient-to-br from-accent-50/50 to-accent-100/30 border-accent-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Shield className="h-5 w-5 mr-2 text-accent-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Shield className="h-5 w-5 mr-2 text-carolina" />
                 Cybersecurity
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">Network Security</li>
-                <li className="text-muted-foreground text-sm">Penetration Testing</li>
-                <li className="text-muted-foreground text-sm">Risk Assessment</li>
-                <li className="text-muted-foreground text-sm">Security Auditing</li>
+                <li className="text-gray-300 text-sm">Network Security</li>
+                <li className="text-gray-300 text-sm">Penetration Testing</li>
+                <li className="text-gray-300 text-sm">Risk Assessment</li>
+                <li className="text-gray-300 text-sm">Security Auditing</li>
               </ul>
             </div>
 
-            <div className="card card-hover bg-gradient-to-br from-primary-50/50 to-primary-100/30 border-primary-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Award className="h-5 w-5 mr-2 text-primary-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Award className="h-5 w-5 mr-2 text-carolina" />
                 Tools
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">Git</li>
-                <li className="text-muted-foreground text-sm">VS Code</li>
-                <li className="text-muted-foreground text-sm">Linux</li>
-                <li className="text-muted-foreground text-sm">Docker</li>
-                <li className="text-muted-foreground text-sm">Figma</li>
+                <li className="text-gray-300 text-sm">Git</li>
+                <li className="text-gray-300 text-sm">VS Code</li>
+                <li className="text-gray-300 text-sm">Linux</li>
+                <li className="text-gray-300 text-sm">Docker</li>
+                <li className="text-gray-300 text-sm">Figma</li>
               </ul>
             </div>
 
-            <div className="card card-hover bg-gradient-to-br from-accent-50/50 to-accent-100/30 border-accent-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Code className="h-5 w-5 mr-2 text-accent-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Code className="h-5 w-5 mr-2 text-carolina" />
                 Databases
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">MongoDB</li>
-                <li className="text-muted-foreground text-sm">PostgreSQL</li>
-                <li className="text-muted-foreground text-sm">MySQL</li>
-                <li className="text-muted-foreground text-sm">Prisma</li>
-                <li className="text-muted-foreground text-sm">Firebase</li>
+                <li className="text-gray-300 text-sm">MongoDB</li>
+                <li className="text-gray-300 text-sm">PostgreSQL</li>
+                <li className="text-gray-300 text-sm">MySQL</li>
+                <li className="text-gray-300 text-sm">Prisma</li>
+                <li className="text-gray-300 text-sm">Firebase</li>
               </ul>
             </div>
 
-            <div className="card card-hover bg-gradient-to-br from-primary-50/50 to-primary-100/30 border-primary-200/60">
-              <h3 className="font-semibold text-lg text-foreground mb-4 flex items-center">
-                <Award className="h-5 w-5 mr-2 text-primary-600" />
+            <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-6 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+              <h3 className="font-semibold text-lg text-carolina mb-4 flex items-center">
+                <Award className="h-5 w-5 mr-2 text-carolina" />
                 DevOps & Cloud
               </h3>
               <ul className="space-y-2">
-                <li className="text-muted-foreground text-sm">Vercel</li>
-                <li className="text-muted-foreground text-sm">Netlify</li>
-                <li className="text-muted-foreground text-sm">GitHub Actions</li>
-                <li className="text-muted-foreground text-sm">Docker</li>
-                <li className="text-muted-foreground text-sm">CI/CD</li>
+                <li className="text-gray-300 text-sm">Vercel</li>
+                <li className="text-gray-300 text-sm">Netlify</li>
+                <li className="text-gray-300 text-sm">GitHub Actions</li>
+                <li className="text-gray-300 text-sm">Docker</li>
+                <li className="text-gray-300 text-sm">CI/CD</li>
               </ul>
             </div>
           </div>
@@ -153,57 +153,57 @@ export default function AboutPage() {
 
         {/* Education & Goals */}
         <section className="grid md:grid-cols-2 gap-12">
-          <div className="card shadow-strong">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Education & Learning</h2>
+          <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+            <h2 className="text-2xl font-bold text-carolina mb-6">Education & Learning</h2>
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-lg text-foreground">Cybersecurity Studies</h3>
-                <p className="text-accent-600 font-medium">CompTIA Security+</p>
-                <p className="text-muted-foreground text-sm mb-3">2024 - Present</p>
-                <p className="text-muted-foreground text-sm">
+                <h3 className="font-semibold text-lg text-white">Cybersecurity Studies</h3>
+                <p className="text-carolina font-medium">CompTIA Security+</p>
+                <p className="text-gray-300 text-sm mb-3">2024 - Present</p>
+                <p className="text-gray-300 text-sm">
                   Focusing on network security, ethical hacking, risk management, and digital forensics.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold text-lg text-foreground">Self-Taught Development</h3>
-                <p className="text-accent-600 font-medium">Continuous Learning</p>
-                <p className="text-muted-foreground text-sm mb-3">Ongoing</p>
-                <p className="text-muted-foreground text-sm">
+                <h3 className="font-semibold text-lg text-white">Self-Taught Development</h3>
+                <p className="text-carolina font-medium">Continuous Learning</p>
+                <p className="text-gray-300 text-sm mb-3">Ongoing</p>
+                <p className="text-gray-300 text-sm">
                   Learning through courses, documentation, and hands-on projects.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="card shadow-strong">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Goals & Interests</h2>
+          <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300">
+            <h2 className="text-2xl font-bold text-carolina mb-6">Goals & Interests</h2>
             <div className="space-y-6">
               <div className="flex items-start space-x-3">
-                <Code className="h-6 w-6 text-accent-600 mt-1 flex-shrink-0" />
+                <Code className="h-6 w-6 text-carolina mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground">Full-Stack Development</h3>
-                  <p className="text-muted-foreground text-sm">
+                  <h3 className="font-semibold text-white">Full-Stack Development</h3>
+                  <p className="text-gray-300 text-sm">
                     Building end-to-end web applications with modern technologies.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <Shield className="h-6 w-6 text-primary-600 mt-1 flex-shrink-0" />
+                <Shield className="h-6 w-6 text-carolina mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground">Cybersecurity Career</h3>
-                  <p className="text-muted-foreground text-sm">
+                  <h3 className="font-semibold text-white">Cybersecurity Career</h3>
+                  <p className="text-gray-300 text-sm">
                     Pursuing a career in cybersecurity to help protect organizations.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-3">
-                <BookOpen className="h-6 w-6 text-success mt-1 flex-shrink-0" />
+                <BookOpen className="h-6 w-6 text-carolina mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground">Continuous Learning</h3>
-                  <p className="text-muted-foreground text-sm">
+                  <h3 className="font-semibold text-white">Continuous Learning</h3>
+                  <p className="text-gray-300 text-sm">
                     Always exploring new technologies and industry trends.
                   </p>
                 </div>

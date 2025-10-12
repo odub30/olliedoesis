@@ -101,3 +101,8 @@ yarn-error.log*
 # Optional: Exclude sensitive content
 content/drafts/private/
 public/images/private/
+
+.vercel
+.env*.local
+
+/src/generated/prisma

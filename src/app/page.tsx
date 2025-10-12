@@ -111,16 +111,16 @@ export default function HomePage() {
           <div className="grid md:grid-cols-3 gap-8">
             <Link
               href="/web-development"
-              className="group card card-hover text-center bg-gradient-to-br from-primary-50 to-primary-100/50 border-primary-200/60 hover:border-primary-400 hover:shadow-glow"
+              className="group text-center bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
             >
               <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow-accent">
                 <Code className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Web Development</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-2xl font-bold text-carolina mb-4">Web Development</h3>
+              <p className="text-gray-300 mb-4">
                 Building modern, responsive web applications with React, Next.js, and TypeScript
               </p>
-              <span className="inline-flex items-center text-accent-600 font-medium text-sm group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-carolina font-medium text-sm group-hover:gap-2 transition-all">
                 Learn more
                 <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -128,16 +128,16 @@ export default function HomePage() {
 
             <Link
               href="/cybersecurity"
-              className="group card card-hover text-center bg-gradient-to-br from-accent-50 to-accent-100/50 border-accent-200/60 hover:border-accent-400 hover:shadow-glow-accent"
+              className="group text-center bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
             >
               <div className="bg-gradient-to-br from-primary-500 to-primary-600 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-glow">
                 <Shield className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Cybersecurity</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-2xl font-bold text-carolina mb-4">Cybersecurity</h3>
+              <p className="text-gray-300 mb-4">
                 Studying network security, penetration testing, and digital forensics
               </p>
-              <span className="inline-flex items-center text-primary-600 font-medium text-sm group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-carolina font-medium text-sm group-hover:gap-2 transition-all">
                 Learn more
                 <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -145,16 +145,16 @@ export default function HomePage() {
 
             <Link
               href="/projects"
-              className="group card card-hover text-center bg-gradient-to-br from-success/10 to-success/20 border-success/30 hover:border-success/50 hover:shadow-md"
+              className="group text-center bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
             >
               <div className="bg-gradient-to-br from-success to-success/80 w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <Laptop className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">Full-Stack Solutions</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-2xl font-bold text-carolina mb-4">Full-Stack Solutions</h3>
+              <p className="text-gray-300 mb-4">
                 End-to-end development from database design to user interface
               </p>
-              <span className="inline-flex items-center text-success font-medium text-sm group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-carolina font-medium text-sm group-hover:gap-2 transition-all">
                 View projects
                 <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
               </span>
@@ -171,15 +171,15 @@ export default function HomePage() {
             <p className="text-lg text-muted-foreground">Here&apos;s what I&apos;ve been working on recently</p>
           </div>
 
-          <div className="card max-w-5xl mx-auto overflow-hidden border-0 shadow-strong">
+          <div className="max-w-5xl mx-auto overflow-hidden bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl shadow-2xl hover:shadow-white/20 transition-all duration-300">
             <div className="md:flex">
               <div className="md:w-1/2 p-8 lg:p-12">
                 <div className="mb-6">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-600 mb-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-carolina/20 text-carolina mb-4">
                     ⭐ Featured
                   </span>
-                  <h3 className="text-2xl font-bold text-foreground mb-4">Portfolio Website</h3>
-                  <p className="text-muted-foreground mb-6 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-carolina mb-4">Portfolio Website</h3>
+                  <p className="text-gray-300 mb-6 leading-relaxed">
                     A modern, secure portfolio built with Next.js, featuring responsive design,
                     GitHub integration, and performance optimization. This site showcases my
                     development skills while documenting my learning journey.
@@ -187,10 +187,10 @@ export default function HomePage() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-8">
-                  <span className="px-3 py-1 bg-primary/10 text-primary-700 rounded-full text-sm font-medium">Next.js</span>
-                  <span className="px-3 py-1 bg-accent/10 text-accent-700 rounded-full text-sm font-medium">TypeScript</span>
-                  <span className="px-3 py-1 bg-success/10 text-success-700 rounded-full text-sm font-medium">Tailwind CSS</span>
-                  <span className="px-3 py-1 bg-warning/10 text-warning-700 rounded-full text-sm font-medium">Vercel</span>
+                  <span className="px-3 py-1 bg-carolina/20 text-carolina rounded-full text-sm font-medium">Next.js</span>
+                  <span className="px-3 py-1 bg-carolina/20 text-carolina rounded-full text-sm font-medium">TypeScript</span>
+                  <span className="px-3 py-1 bg-carolina/20 text-carolina rounded-full text-sm font-medium">Tailwind CSS</span>
+                  <span className="px-3 py-1 bg-carolina/20 text-carolina rounded-full text-sm font-medium">Vercel</span>
                 </div>
 
                 <div className="flex space-x-6">
@@ -198,7 +198,7 @@ export default function HomePage() {
                     href="https://github.com/odub30/olliedoesis"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-ghost text-muted-foreground hover:text-foreground"
+                    className="inline-flex items-center text-white hover:text-carolina transition-colors"
                   >
                     <Github className="h-4 w-4 mr-2" />
                     <span>View Code</span>
@@ -207,7 +207,7 @@ export default function HomePage() {
                     href="https://olliedoesis.vercel.app"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-ghost text-muted-foreground hover:text-foreground"
+                    className="inline-flex items-center text-white hover:text-carolina transition-colors"
                   >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     <span>Live Site</span>
@@ -215,7 +215,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="md:w-1/2 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 flex items-center justify-center p-8 lg:p-12">
+              <div className="md:w-1/2 bg-gradient-to-br from-dark-blue-light/80 to-dark-blue flex items-center justify-center p-8 lg:p-12">
                 <div className="text-center">
                   <div className="relative">
                     <div className="w-32 h-32 bg-gradient-to-br from-primary-400 to-accent-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
@@ -225,7 +225,7 @@ export default function HomePage() {
                       <Sparkles className="w-4 h-4 text-white" />
                     </div>
                   </div>
-                  <p className="text-muted-foreground font-medium">Live & Interactive</p>
+                  <p className="text-gray-300 font-medium">Live & Interactive</p>
                 </div>
               </div>
             </div>

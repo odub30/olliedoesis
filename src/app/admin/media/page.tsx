@@ -1,0 +1,367 @@
+// src/app/admin/media/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
+import { Upload, Image as ImageIcon, Trash2, Edit2, X, Loader2, AlertCircle } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+
+interface Image {
+  id: string;
+  url: string;
+  alt: string;
+  caption: string | null;
+  width: number | null;
+  height: number | null;
+  format: string | null;
+  size: number | null;
+  createdAt: Date;
+  project: { id: string; title: string; slug: string } | null;
+  blog: { id: string; title: string; slug: string } | null;
+  tags: Array<{ id: string; name: string; slug: string }>;
+}
+
+export default function MediaLibraryPage() {
+  const [images, setImages] = useState<Image[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [filter, setFilter] = useState<"all" | "projects" | "blogs" | "unattached">("all");
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ alt: "", caption: "" });
+
+  // Fetch images
+  useEffect(() => {
+    fetchImages();
+  }, [filter]);
+
+  const fetchImages = async () => {
+    setIsLoading(true);
+    try {
+      const queryParams = new URLSearchParams();
+      if (filter === "unattached") queryParams.set("unattached", "true");
+
+      const response = await fetch(`/api/admin/upload?${queryParams.toString()}`);
+      if (!response.ok) throw new Error("Failed to fetch images");
+
+      const data = await response.json();
+      setImages(data.images || []);
+    } catch (error) {
+      console.error("Error fetching images:", error);
+      toast.error("Failed to load images");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (imageId: string) => {
+    if (!confirm("Are you sure you want to delete this image?")) return;
+
+    try {
+      const response = await fetch(`/api/admin/upload?id=${imageId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete image");
+
+      toast.success("Image deleted successfully");
+      fetchImages();
+    } catch (error) {
+      console.error("Error deleting image:", error);
+      toast.error("Failed to delete image");
+    }
+  };
+
+  const openEditModal = (image: Image) => {
+    setSelectedImage(image);
+    setEditForm({
+      alt: image.alt,
+      caption: image.caption || "",
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedImage(null);
+    setEditForm({ alt: "", caption: "" });
+  };
+
+  const formatFileSize = (bytes: number | null) => {
+    if (!bytes) return "Unknown";
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(1)} KB`;
+    return `${(kb / 1024).toFixed(1)} MB`;
+  };
+
+  const filteredImages = images.filter((img) => {
+    if (filter === "all") return true;
+    if (filter === "projects") return img.project !== null;
+    if (filter === "blogs") return img.blog !== null;
+    if (filter === "unattached") return img.project === null && img.blog === null;
+    return true;
+  });
+
+  return (
+    <div className="space-y-8">
+      <Toaster position="top-center" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Media Library</h1>
+          <p className="text-muted-foreground">
+            Manage images used across your portfolio ({images.length} total)
+          </p>
+        </div>
+        <button
+          className="flex items-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
+          onClick={() =>
+            toast("Upload functionality requires storage integration (Vercel Blob, S3, etc.)", {
+              icon: "ℹ️",
+            })
+          }
+        >
+          <Upload className="h-5 w-5" />
+          Upload Images
+        </button>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex gap-2 border-b border-gray-200">
+        {[
+          { value: "all", label: "All Images" },
+          { value: "projects", label: "Projects" },
+          { value: "blogs", label: "Blogs" },
+          { value: "unattached", label: "Unattached" },
+        ].map((tab) => (
+          <button
+            key={tab.value}
+            onClick={() => setFilter(tab.value as any)}
+            className={`px-4 py-2 font-medium transition-colors border-b-2 ${
+              filter === tab.value
+                ? "border-accent-600 text-accent-600"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-accent-600" />
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && filteredImages.length === 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+          <ImageIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-foreground mb-2">No images found</h3>
+          <p className="text-muted-foreground mb-4">
+            {filter === "all"
+              ? "Upload your first image to get started"
+              : `No images in ${filter} category`}
+          </p>
+        </div>
+      )}
+
+      {/* Image Grid */}
+      {!isLoading && filteredImages.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredImages.map((image) => (
+            <div
+              key={image.id}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden group hover:shadow-lg transition-shadow"
+            >
+              {/* Image Preview */}
+              <div className="relative aspect-video bg-gray-100 overflow-hidden">
+                <img
+                  src={image.url}
+                  alt={image.alt}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {/* Overlay Actions */}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => openEditModal(image)}
+                    className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
+                    title="Edit"
+                  >
+                    <Edit2 className="h-4 w-4 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(image.id)}
+                    className="p-2 bg-white rounded-lg hover:bg-red-50 transition-colors"
+                    title="Delete"
+                  >
+                    <Trash2 className="h-4 w-4 text-red-600" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Image Info */}
+              <div className="p-4">
+                <p className="font-medium text-foreground text-sm mb-1 truncate" title={image.alt}>
+                  {image.alt}
+                </p>
+                {image.caption && (
+                  <p className="text-xs text-muted-foreground mb-2 line-clamp-2">
+                    {image.caption}
+                  </p>
+                )}
+
+                {/* Meta Info */}
+                <div className="flex items-center justify-between text-xs text-muted-foreground mt-2 pt-2 border-t border-gray-100">
+                  <span>
+                    {image.width && image.height
+                      ? `${image.width}×${image.height}`
+                      : "No dimensions"}
+                  </span>
+                  <span>{formatFileSize(image.size)}</span>
+                </div>
+
+                {/* Attachments */}
+                {(image.project || image.blog) && (
+                  <div className="mt-2 pt-2 border-t border-gray-100">
+                    {image.project && (
+                      <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                        Project: {image.project.title}
+                      </span>
+                    )}
+                    {image.blog && (
+                      <span className="inline-block px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                        Blog: {image.blog.title}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {isEditModalOpen && selectedImage && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-foreground">Edit Image</h2>
+              <button
+                onClick={closeEditModal}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              {/* Image Preview */}
+              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                <img
+                  src={selectedImage.url}
+                  alt={selectedImage.alt}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Edit Form */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Alt Text *
+                  </label>
+                  <input
+                    type="text"
+                    value={editForm.alt}
+                    onChange={(e) => setEditForm({ ...editForm, alt: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                    placeholder="Descriptive alt text for accessibility"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Caption
+                  </label>
+                  <textarea
+                    value={editForm.caption}
+                    onChange={(e) => setEditForm({ ...editForm, caption: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none resize-none"
+                    rows={3}
+                    placeholder="Optional caption"
+                  />
+                </div>
+
+                {/* Image Details */}
+                <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-foreground">Dimensions:</span>{" "}
+                    {selectedImage.width && selectedImage.height
+                      ? `${selectedImage.width} × ${selectedImage.height}`
+                      : "Unknown"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-foreground">Format:</span>{" "}
+                    {selectedImage.format || "Unknown"}
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-foreground">Size:</span>{" "}
+                    {formatFileSize(selectedImage.size)}
+                  </p>
+                  <p className="text-muted-foreground">
+                    <span className="font-medium text-foreground">URL:</span>{" "}
+                    <a
+                      href={selectedImage.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent-600 hover:underline truncate block"
+                    >
+                      {selectedImage.url}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+              <button
+                onClick={closeEditModal}
+                className="px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  toast.success("Image edit functionality coming soon!");
+                  closeEditModal();
+                }}
+                className="px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Info Banner */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+        <div className="text-sm text-blue-900">
+          <p className="font-medium mb-1">Storage Integration Required</p>
+          <p className="text-blue-700">
+            To upload images, integrate with a storage provider like Vercel Blob, AWS S3, or
+            Cloudinary. The API endpoints are ready at <code className="bg-blue-100 px-1 py-0.5 rounded">/api/admin/upload</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

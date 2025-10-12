@@ -1,0 +1,41 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#grad2)"/>
+
+  <!-- Performance Bars -->
+  <rect x="200" y="200" width="800" height="60" fill="rgba(255,255,255,0.2)" rx="10"/>
+  <rect x="200" y="200" width="760" height="60" fill="rgba(255,255,255,0.9)" rx="10"/>
+  <text x="220" y="240" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#059669">
+    Performance: 100
+  </text>
+
+  <rect x="200" y="300" width="800" height="60" fill="rgba(255,255,255,0.2)" rx="10"/>
+  <rect x="200" y="300" width="760" height="60" fill="rgba(255,255,255,0.9)" rx="10"/>
+  <text x="220" y="340" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#059669">
+    Accessibility: 100
+  </text>
+
+  <rect x="200" y="400" width="800" height="60" fill="rgba(255,255,255,0.2)" rx="10"/>
+  <rect x="200" y="400" width="760" height="60" fill="rgba(255,255,255,0.9)" rx="10"/>
+  <text x="220" y="440" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#059669">
+    Best Practices: 100
+  </text>
+
+  <rect x="200" y="500" width="800" height="60" fill="rgba(255,255,255,0.2)" rx="10"/>
+  <rect x="200" y="500" width="760" height="60" fill="rgba(255,255,255,0.9)" rx="10"/>
+  <text x="220" y="540" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#059669">
+    SEO: 100
+  </text>
+
+  <text x="600" y="650" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle">
+    Lighthouse Performance Scores
+  </text>
+  <text x="600" y="700" font-family="Arial, sans-serif" font-size="16" fill="rgba(255,255,255,0.8)" text-anchor="middle">
+    [Placeholder Image - Replace with actual screenshot]
+  </text>
+</svg>

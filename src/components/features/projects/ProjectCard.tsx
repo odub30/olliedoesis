@@ -16,9 +16,9 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
     : 'col-span-1';
 
   return (
-    <div className={`group relative card card-hover border-0 shadow-soft hover:shadow-strong bg-card ${cardClasses} ${className}`}>
+    <div className={`group relative bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 ${cardClasses} ${className}`}>
       {/* Project Image */}
-      <div className="relative aspect-video overflow-hidden rounded-t-lg">
+      <div className="relative aspect-video overflow-hidden rounded-t-xl">
         <Image
           src={project.image || '/images/projects/placeholder.png'}
           alt={`${project.title} screenshot`}
@@ -89,15 +89,15 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
       <div className="p-6">
         {/* Header */}
         <div className="mb-6">
-          <h3 className={`font-bold text-foreground mb-3 group-hover:text-primary-600 transition-colors ${
+          <h3 className={`font-bold text-carolina mb-3 group-hover:text-carolina/80 transition-colors ${
             featured ? 'text-2xl' : 'text-xl'
           }`}>
-            <Link href={`/projects/${project.slug}`} className="hover:underline decoration-2 underline-offset-4 decoration-primary-500">
+            <Link href={`/projects/${project.slug}`} className="hover:underline decoration-2 underline-offset-4 decoration-carolina">
               {project.title}
             </Link>
           </h3>
 
-          <p className={`text-muted-foreground leading-relaxed ${
+          <p className={`text-gray-300 leading-relaxed ${
             featured ? 'text-base' : 'text-sm'
           }`}>
             {project.description}
@@ -110,18 +110,13 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
             {project.tech.slice(0, featured ? 6 : 4).map((tech, index) => (
               <span
                 key={tech}
-                className={`px-3 py-1 text-xs font-medium rounded-full border transition-all duration-200 hover:scale-105 ${
-                  index % 4 === 0 ? 'bg-primary/10 text-primary-700 border-primary/20 hover:bg-primary/20' :
-                  index % 4 === 1 ? 'bg-accent/10 text-accent-700 border-accent/20 hover:bg-accent/20' :
-                  index % 4 === 2 ? 'bg-success/10 text-success-700 border-success/20 hover:bg-success/20' :
-                  'bg-warning/10 text-warning-700 border-warning/20 hover:bg-warning/20'
-                }`}
+                className="px-3 py-1 text-xs font-medium rounded-full bg-carolina/20 text-carolina border border-carolina/30 hover:bg-carolina/30 transition-all duration-200 hover:scale-105"
               >
                 {tech}
               </span>
             ))}
             {project.tech.length > (featured ? 6 : 4) && (
-              <span className="px-3 py-1 text-xs font-medium bg-muted/10 text-muted-foreground border border-border rounded-full">
+              <span className="px-3 py-1 text-xs font-medium bg-white/10 text-gray-300 border border-white/20 rounded-full">
                 +{project.tech.length - (featured ? 6 : 4)} more
               </span>
             )}
@@ -130,27 +125,27 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
 
         {/* GitHub Stats (if available) */}
         {project.githubStats && (
-          <div className="flex items-center gap-6 text-sm text-muted-foreground mb-6 p-3 bg-muted/30 rounded-lg">
+          <div className="flex items-center gap-6 text-sm text-gray-300 mb-6 p-3 bg-dark-blue-light/50 rounded-lg">
             <span className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-warning-500" />
+              <Star className="w-4 h-4 text-carolina" />
               <span className="font-medium">{project.githubStats.stars}</span>
             </span>
             <span className="flex items-center gap-2">
-              <GitFork className="w-4 h-4 text-primary-500" />
+              <GitFork className="w-4 h-4 text-carolina" />
               <span className="font-medium">{project.githubStats.forks}</span>
             </span>
             <span className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-accent-500" />
+              <Calendar className="w-4 h-4 text-carolina" />
               <span className="font-medium">{project.githubStats.lastUpdated}</span>
             </span>
           </div>
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/40">
+        <div className="flex items-center justify-between pt-4 border-t border-white/20">
           <Link
             href={`/projects/${project.slug}`}
-            className="btn btn-ghost text-sm group/link"
+            className="inline-flex items-center text-sm text-carolina hover:text-carolina/80 transition-colors group/link"
           >
             <Eye className="w-4 h-4 mr-2 group-hover/link:scale-110 transition-transform" />
             View Details
@@ -162,7 +157,7 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
                 href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200 hover:scale-110"
+                className="p-2 text-gray-300 hover:text-carolina hover:bg-carolina/10 rounded-lg transition-all duration-200 hover:scale-110"
                 aria-label="GitHub"
               >
                 <Github className="w-4 h-4" />
@@ -173,7 +168,7 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
                 href={project.live}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200 hover:scale-110"
+                className="p-2 text-gray-300 hover:text-carolina hover:bg-carolina/10 rounded-lg transition-all duration-200 hover:scale-110"
                 aria-label="Live Demo"
               >
                 <ExternalLink className="w-4 h-4" />

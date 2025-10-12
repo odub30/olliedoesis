@@ -99,11 +99,11 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-carolina mb-2">
                 Name
               </label>
               <input
@@ -112,19 +112,19 @@ export default function ContactPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
-                  errors.name ? "border-red-500" : "border-gray-300"
+                className={`w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-carolina focus:border-carolina outline-none transition bg-dark-blue-light text-white placeholder:text-gray-400 ${
+                  errors.name ? "border-red-500" : "border-white"
                 }`}
                 placeholder="Your name"
               />
               {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.name}</p>
               )}
             </div>
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-carolina mb-2">
                 Email
               </label>
               <input
@@ -133,19 +133,19 @@ export default function ContactPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
-                  errors.email ? "border-red-500" : "border-gray-300"
+                className={`w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-carolina focus:border-carolina outline-none transition bg-dark-blue-light text-white placeholder:text-gray-400 ${
+                  errors.email ? "border-red-500" : "border-white"
                 }`}
                 placeholder="your.email@example.com"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.email}</p>
               )}
             </div>
 
             {/* Subject Field */}
             <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="subject" className="block text-sm font-medium text-carolina mb-2">
                 Subject
               </label>
               <input
@@ -154,19 +154,19 @@ export default function ContactPage() {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition ${
-                  errors.subject ? "border-red-500" : "border-gray-300"
+                className={`w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-carolina focus:border-carolina outline-none transition bg-dark-blue-light text-white placeholder:text-gray-400 ${
+                  errors.subject ? "border-red-500" : "border-white"
                 }`}
                 placeholder="What's this about?"
               />
               {errors.subject && (
-                <p className="mt-1 text-sm text-red-600">{errors.subject}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.subject}</p>
               )}
             </div>
 
             {/* Message Field */}
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-medium text-carolina mb-2">
                 Message
               </label>
               <textarea
@@ -175,13 +175,13 @@ export default function ContactPage() {
                 value={formData.message}
                 onChange={handleChange}
                 rows={6}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none ${
-                  errors.message ? "border-red-500" : "border-gray-300"
+                className={`w-full px-4 py-2 border-2 rounded-lg focus:ring-2 focus:ring-carolina focus:border-carolina outline-none transition resize-none bg-dark-blue-light text-white placeholder:text-gray-400 ${
+                  errors.message ? "border-red-500" : "border-white"
                 }`}
                 placeholder="Your message..."
               />
               {errors.message && (
-                <p className="mt-1 text-sm text-red-600">{errors.message}</p>
+                <p className="mt-1 text-sm text-red-400">{errors.message}</p>
               )}
             </div>
 
@@ -189,23 +189,23 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-carolina text-white py-3 px-6 rounded-lg font-medium hover:bg-carolina/80 focus:outline-none focus:ring-2 focus:ring-carolina focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Sending..." : "Send Message"}
             </button>
 
             {/* Status Messages */}
             {submitStatus === "success" && (
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-800 text-center">
+              <div className="p-4 bg-green-900/50 border border-green-500 rounded-lg">
+                <p className="text-green-300 text-center">
                   Thank you! Your message has been sent successfully.
                 </p>
               </div>
             )}
 
             {submitStatus === "error" && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800 text-center">
+              <div className="p-4 bg-red-900/50 border border-red-500 rounded-lg">
+                <p className="text-red-300 text-center">
                   Oops! Something went wrong. Please try again later.
                 </p>
               </div>

@@ -74,15 +74,15 @@ export function Hero() {
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-pulse" />
             <div className="relative w-full h-full bg-gray-200 rounded-full overflow-hidden border-4 border-white shadow-xl">
               <Image
-                src="/images/avatar.jpg"
-                alt="Your Name"
+                src="/images/avatars/avatar.webp"
+                alt="Ollie Does Is"
                 fill
                 className="object-cover"
                 priority
                 onError={(e) => {
                   // Fallback to a placeholder if image doesn't exist
                   const target = e.target as HTMLImageElement;
-                  target.src = `https://ui-avatars.com/api/?name=Your+Name&size=200&background=3b82f6&color=ffffff&format=svg`;
+                  target.src = `https://ui-avatars.com/api/?name=Ollie+Does+Is&size=200&background=3b82f6&color=ffffff&format=svg`;
                 }}
               />
             </div>

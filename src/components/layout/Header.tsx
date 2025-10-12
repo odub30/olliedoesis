@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Code, Github, Linkedin, Mail, Moon, Sun } from 'lucide-react';
+import { Menu, X, Code, Github, Linkedin, Mail, Moon, Sun, Search } from 'lucide-react';
+import GlobalSearch from '@/components/GlobalSearch';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const pathname = usePathname();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -85,6 +87,15 @@ export default function Header() {
 
           {/* Actions (Desktop) */}
           <div className="hidden md:flex items-center space-x-2">
+            {/* Search Button */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200 group"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5 group-hover:text-carolina" />
+            </button>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -132,6 +143,15 @@ export default function Header() {
 
           {/* Mobile Actions */}
           <div className="md:hidden flex items-center space-x-2">
+            {/* Search Button */}
+            <button
+              onClick={() => setIsSearchOpen(true)}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all duration-200"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -224,6 +244,11 @@ export default function Header() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Global Search Modal */}
+      {isSearchOpen && (
+        <GlobalSearch onClose={() => setIsSearchOpen(false)} />
       )}
     </header>
   );

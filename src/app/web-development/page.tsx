@@ -170,7 +170,7 @@ export default function WebDevelopmentPage() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className={`group card card-hover bg-gradient-to-br from-card to-primary-50/30 border-primary-200/40 transition-all duration-500 ${
+                className={`group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-xl p-8 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 ${
                   mounted ? 'animate-fade-in' : 'opacity-0'
                 }`}
                 style={{ animationDelay: `${index * 100}ms` }}
@@ -178,14 +178,14 @@ export default function WebDevelopmentPage() {
                 <div className="bg-gradient-to-br from-accent-500 to-accent-600 w-16 h-16 rounded-xl flex items-center justify-center mb-6 text-white group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-glow-accent">
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+                <h3 className="text-xl font-bold text-carolina mb-3">{service.title}</h3>
+                <p className="text-gray-300 mb-6 leading-relaxed">
                   {service.description}
                 </p>
                 <ul className="space-y-2">
                   {service.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-sm text-muted-foreground">
-                      <CheckCircle className="h-4 w-4 text-accent-600 mr-2 flex-shrink-0" />
+                    <li key={idx} className="flex items-center text-sm text-gray-300">
+                      <CheckCircle className="h-4 w-4 text-carolina mr-2 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -213,16 +213,12 @@ export default function WebDevelopmentPage() {
             {technologies.map((tech, index) => (
               <div
                 key={index}
-                className={`group card text-center p-6 hover:shadow-glow transition-all duration-300 ${
-                  tech.color === 'accent'
-                    ? 'bg-gradient-to-br from-accent-50 to-accent-100/50 border-accent-200/60 hover:border-accent-400'
-                    : 'bg-gradient-to-br from-primary-50 to-primary-100/30 border-primary-200/60 hover:border-primary-400'
-                }`}
+                className="group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white rounded-lg p-4 shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 text-center"
               >
-                <div className="font-semibold text-foreground mb-1 group-hover:scale-110 transition-transform">
+                <div className="font-semibold text-white mb-1 group-hover:scale-110 transition-transform">
                   {tech.name}
                 </div>
-                <div className="text-xs text-muted-foreground">{tech.category}</div>
+                <div className="text-xs text-gray-300">{tech.category}</div>
               </div>
             ))}
           </div>
@@ -246,10 +242,10 @@ export default function WebDevelopmentPage() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="flex items-start space-x-3 p-6 rounded-xl bg-gradient-to-br from-card to-accent-50/20 border border-border hover:border-accent-300 transition-all duration-300 hover:shadow-md"
+                className="flex items-start space-x-3 p-6 rounded-xl bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white shadow-2xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300"
               >
-                <CheckCircle className="h-6 w-6 text-accent-600 flex-shrink-0 mt-0.5" />
-                <span className="text-foreground font-medium">{feature}</span>
+                <CheckCircle className="h-6 w-6 text-carolina flex-shrink-0 mt-0.5" />
+                <span className="text-white font-medium">{feature}</span>
               </div>
             ))}
           </div>

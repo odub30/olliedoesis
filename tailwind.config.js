@@ -9,6 +9,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'dark-blue': {
+          DEFAULT: '#0A1929',
+          light: '#1A2942',
+          dark: '#040A11',
+        },
+        'carolina': {
+          DEFAULT: '#4B9CD3',
+          light: '#56B4E9',
+          dark: '#3A7BA8',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

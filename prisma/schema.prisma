@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DATABASE_URL")
+}
+// Authentication Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(PUBLIC)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  accounts      Account[]
+  sessions      Session[]
+  projects      Project[]
+  blogs         Blog[]
+  searchHistory SearchHistory[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  PUBLIC
+  ADMIN
+}
+
+// Content Models
+model Project {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  description   String
+  content       String    @db.Text
+  technologies  String[]
+  liveUrl       String?
+  githubUrl     String?
+  featured      Boolean   @default(false)
+  published     Boolean   @default(false)
+  views         Int       @default(0)
+  order         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  author        User      @relation(fields: [authorId], references: [id])
+  authorId      String
+  tags          Tag[]
+  images        Image[]
+  
+  @@index([title, description])
+  @@index([slug])
+  @@index([published, featured])
+  @@index([order])
+}
+
+model Blog {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    @db.Text
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
+  readTime    Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String
+  tags        Tag[]
+  images      Image[]
+  
+  @@index([title, excerpt])
+  @@index([slug])
+  @@index([published, featured])
+  @@index([publishedAt])
+}
+
+model Image {
+  id          String    @id @default(cuid())
+  url         String
+  alt         String
+  caption     String?
+  width       Int?
+  height      Int?
+  format      String?
+  size        Int?
+  blurDataUrl String?   @db.Text
+  createdAt   DateTime  @default(now())
+  
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  blogId      String?
+  blog        Blog?     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  tags        Tag[]
+  
+  @@index([alt, caption])
+  @@index([projectId])
+  @@index([blogId])
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  count     Int       @default(0)
+  createdAt DateTime  @default(now())
+  
+  projects  Project[]
+  blogs     Blog[]
+  images    Image[]
+  
+  @@index([name])
+  @@index([slug])
+  @@index([count])
+}
+
+// Search & Analytics Models
+model SearchHistory {
+  id            String   @id @default(cuid())
+  query         String
+  category      String?
+  results       Int
+  clickedResult String?
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  ipHash        String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  
+  @@index([query])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([category])
+}
+
+model SearchAnalytics {
+  id            String   @id @default(cuid())
+  query         String   @unique
+  searchCount   Int      @default(1)
+  clickCount    Int      @default(0)
+  lastSearched  DateTime @default(now())
+  avgResults    Float    @default(0)
+  
+  @@index([searchCount])
+  @@index([lastSearched])
+  @@index([clickCount])
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  path      String
+  title     String?
+  referrer  String?
+  ipHash    String?
+  userAgent String?
+  country   String?
+  createdAt DateTime @default(now())
+  
+  @@index([path])
+  @@index([createdAt])
+}

@@ -4,7 +4,7 @@ description: "Modern, responsive portfolio built with Next.js 15 and Tailwind CS
 date: "2025-09-25"
 status: "completed"
 featured: true
-image: "/images/projects/portfolio-website.png"
+image: "/images/projects/full/portfolio-website.webp"
 github: "https://github.com/odub30/olliedoesis"
 live: "https://olliedoesis.vercel.app"
 tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel"]

@@ -261,7 +261,7 @@ export default function GlobalSearch() {
                 {query.trim() && totalResults === 0 && !isLoading && (
                   <div className="p-8 text-center">
                     <Search className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">No results found for "{query}"</p>
+                    <p className="text-gray-500">No results found for &quot;{query}&quot;</p>
                     <p className="text-sm text-gray-400 mt-1">Try a different search term</p>
                   </div>
                 )}

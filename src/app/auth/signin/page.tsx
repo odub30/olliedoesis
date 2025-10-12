@@ -103,14 +103,15 @@ export default function SignInPage() {
           {!emailSent ? (
             <>
               {/* Email Form */}
-              <form onSubmit={handleEmailSignIn} className="space-y-4">
+              <form suppressHydrationWarning onSubmit={handleEmailSignIn} className="space-y-4">
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                     Email address
                   </label>
-                  <div className="relative">
+                  <div suppressHydrationWarning className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <input
+                      suppressHydrationWarning
                       id="email"
                       type="email"
                       value={email}

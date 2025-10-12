@@ -24,7 +24,7 @@ export default function VerifyRequestPage() {
             <ol className="text-sm text-accent-800 space-y-1 list-decimal list-inside">
               <li>Open the email we just sent you</li>
               <li>Click the sign-in link</li>
-              <li>You'll be automatically signed in</li>
+              <li>You&apos;ll be automatically signed in</li>
             </ol>
           </div>
 

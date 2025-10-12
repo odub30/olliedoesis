@@ -167,7 +167,7 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Initialize results
-    let allResults: Array<SearchResult & { score: number; url: string }> = [];
+    const allResults: Array<SearchResult & { score: number; url: string }> = [];
 
     // Search Projects
     if (category === "all" || category === "projects") {

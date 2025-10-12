@@ -55,7 +55,7 @@ export default function SearchPage() {
 
       if (data.results) {
         // Apply client-side sorting if needed
-        let allResults: any[] = [];
+        const allResults: any[] = [];
 
         // Combine all results
         if (data.results.projects) allResults.push(...data.results.projects);

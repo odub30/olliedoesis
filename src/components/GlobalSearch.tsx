@@ -199,7 +199,7 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps = {}) {
 
             {query && !isLoading && results && results.totalResults === 0 && (
               <div className="p-8 text-center text-muted-foreground">
-                <p className="text-sm">No results found for "{query}"</p>
+                <p className="text-sm">No results found for &quot;{query}&quot;</p>
               </div>
             )}
 

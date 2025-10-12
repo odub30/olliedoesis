@@ -146,8 +146,8 @@ export const authConfig: NextAuthConfig = {
     },
   },
 
-  // Debug mode (disable in production)
-  debug: process.env.NODE_ENV === "development",
+  // Debug mode (disabled)
+  debug: false,
 };
 
 // Export NextAuth instance

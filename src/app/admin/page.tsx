@@ -119,7 +119,7 @@ export default async function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
         <p className="text-muted-foreground">
-          Welcome back! Here's what's happening with your content.
+          Welcome back! Here&apos;s what&apos;s happening with your content.
         </p>
       </div>
 

@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Folder } from "lucide-react";
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     category: string;
-  };
+  }>;
 }
 
 // Helper to convert slug to category name
@@ -43,7 +43,8 @@ export async function generateStaticParams() {
 
 // Generate metadata
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
-  const category = slugToCategory(params.category);
+  const { category: categorySlug } = await params;
+  const category = slugToCategory(categorySlug);
 
   if (!category) {
     return {
@@ -64,8 +65,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const category = slugToCategory(params.category);
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const { category: categorySlug } = await params;
+  const category = slugToCategory(categorySlug);
 
   if (!category) {
     notFound();

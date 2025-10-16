@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tag } from "lucide-react";
 
 interface TagPageProps {
-  params: {
+  params: Promise<{
     tag: string;
-  };
+  }>;
 }
 
 // Helper to convert slug to tag name
@@ -34,7 +34,8 @@ export async function generateStaticParams() {
 
 // Generate metadata
 export async function generateMetadata({ params }: TagPageProps): Promise<Metadata> {
-  const tagName = slugToTag(params.tag);
+  const { tag: tagSlug } = await params;
+  const tagName = slugToTag(tagSlug);
   const posts = getPostsByTag(tagName);
 
   return {
@@ -48,8 +49,9 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   };
 }
 
-export default function TagPage({ params }: TagPageProps) {
-  const tagName = slugToTag(params.tag);
+export default async function TagPage({ params }: TagPageProps) {
+  const { tag: tagSlug } = await params;
+  const tagName = slugToTag(tagSlug);
 
   // Check if tag exists
   if (!allTags.includes(tagName)) {

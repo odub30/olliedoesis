@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import { BlogsList } from "@/components/blog/blogs-list";
 
+// Force dynamic rendering since this page requires database access
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Blog | Ollie Doesis",
   description: "Articles and insights on web development, cybersecurity, and technology.",

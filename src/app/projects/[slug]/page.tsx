@@ -6,12 +6,17 @@ import { marked } from 'marked';
 import { prisma } from '@/lib/prisma';
 import { logDebug } from "@/lib/logger";
 
-export async function generateStaticParams() {
-  const projects = await getProjects();
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
+// Force dynamic rendering since this page requires database access
+export const dynamic = 'force-dynamic';
+
+// Removed generateStaticParams to avoid build-time database access
+// Pages will be generated on-demand instead
+// export async function generateStaticParams() {
+//   const projects = await getProjects();
+//   return projects.map((project) => ({
+//     slug: project.slug,
+//   }));
+// }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

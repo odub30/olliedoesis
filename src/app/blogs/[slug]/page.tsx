@@ -13,6 +13,9 @@ import { MetricsDisplay } from "@/components/blog/MetricsDisplay";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import type { TagEntry } from '@/types/db'
 
+// Force dynamic rendering since this page requires database access
+export const dynamic = 'force-dynamic';
+
 // Configure marked for safe HTML rendering
 marked.setOptions({
   gfm: true,

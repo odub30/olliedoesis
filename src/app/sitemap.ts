@@ -3,6 +3,9 @@ import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 import { logError } from '@/lib/logger';
 
+// Force dynamic rendering since this requires database access
+export const dynamic = 'force-dynamic';
+
 /**
  * Dynamic Sitemap Generation
  *

@@ -6,18 +6,37 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import { TagSelector, type Tag } from "@/components/admin/TagSelector";
+import { KeywordsInput } from "@/components/admin/KeywordsInput";
+import { CodeExamplesManager, type CodeExample } from "@/components/admin/CodeExamplesManager";
+import { FAQManager, type FAQ } from "@/components/admin/FAQManager";
+import { RelatedPostsSelector } from "@/components/admin/RelatedPostsSelector";
+import { logError } from "@/lib/logger";
 
 export default function NewBlogPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [codeExamples, setCodeExamples] = useState<CodeExample[]>([]);
+  const [faqs, setFAQs] = useState<FAQ[]>([]);
+  const [relatedPostIds, setRelatedPostIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
     excerpt: "",
     content: "",
+    category: "",
+    githubRepo: "",
     published: false,
     featured: false,
     publishedAt: "",
+    // Metrics
+    bundleReduction: "",
+    fcpImprovement: "",
+    lcpImprovement: "",
+    ttiImprovement: "",
+    lighthouseIncrease: "",
   });
 
   // Auto-generate slug from title
@@ -36,15 +55,29 @@ export default function NewBlogPage() {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/admin/blogs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          tagIds: selectedTags.map(tag => tag.id),
+          keywords,
+          relatedPostIds,
+          codeExamples: codeExamples.map(({ id, ...rest }) => rest),
+          faqs: faqs.map(({ id, ...rest }) => rest),
+          metrics: {
+            bundleReduction: formData.bundleReduction || null,
+            fcpImprovement: formData.fcpImprovement || null,
+            lcpImprovement: formData.lcpImprovement || null,
+            ttiImprovement: formData.ttiImprovement || null,
+            lighthouseIncrease: formData.lighthouseIncrease ? parseInt(formData.lighthouseIncrease) : null,
+          },
+        }),
       });
 
       if (!response.ok) {
@@ -52,16 +85,18 @@ export default function NewBlogPage() {
         throw new Error(error.error || "Failed to create blog post");
       }
 
-      const data = await response.json();
-      toast.success("Blog post created successfully!");
+  // Response body not required here; indicate success and redirect.
+  toast.success('Blog post created successfully!');
 
       // Redirect to blogs list after short delay
       setTimeout(() => {
         router.push("/admin/blogs");
       }, 1000);
-    } catch (error: any) {
-      console.error("Error creating blog:", error);
-      toast.error(error.message || "Failed to create blog post");
+    } catch (error: unknown) {
+      // Narrow unknown to Error to access message safely.
+      const err = error instanceof Error ? error : new Error(String(error));
+      logError('Error creating blog', err);
+      toast.error(err.message || 'Failed to create blog post');
     } finally {
       setIsSubmitting(false);
     }
@@ -162,6 +197,70 @@ export default function NewBlogPage() {
             </p>
           </div>
 
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Tags
+            </label>
+            <TagSelector
+              selectedTags={selectedTags}
+              onChange={setSelectedTags}
+              placeholder="Search or create tags..."
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Add tags to categorize your blog post and improve discoverability
+            </p>
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Category
+            </label>
+            <input
+              type="text"
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+              placeholder="e.g., Frontend Development, Performance, Security"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Main category for this blog post
+            </p>
+          </div>
+
+          {/* Keywords */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              SEO Keywords
+            </label>
+            <KeywordsInput
+              keywords={keywords}
+              onChange={setKeywords}
+              placeholder="Add SEO keyword..."
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Keywords for search engine optimization (press Enter to add)
+            </p>
+          </div>
+
+          {/* GitHub Repository */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              GitHub Repository (Optional)
+            </label>
+            <input
+              type="url"
+              value={formData.githubRepo}
+              onChange={(e) => setFormData({ ...formData, githubRepo: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+              placeholder="https://github.com/username/repo"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Link to related GitHub repository
+            </p>
+          </div>
+
           {/* Published Date */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
@@ -216,6 +315,121 @@ export default function NewBlogPage() {
           </label>
         </div>
 
+        {/* Code Examples Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Code Examples & Demos</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Add links to interactive examples (GitHub, StackBlitz, CodeSandbox, etc.)
+            </p>
+          </div>
+          <CodeExamplesManager examples={codeExamples} onChange={setCodeExamples} />
+        </div>
+
+        {/* FAQs Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Frequently Asked Questions</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Add common questions and answers related to this blog post
+            </p>
+          </div>
+          <FAQManager faqs={faqs} onChange={setFAQs} />
+        </div>
+
+        {/* Performance Metrics Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Performance Metrics</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Add performance improvements to showcase (optional)
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Bundle Reduction
+              </label>
+              <input
+                type="text"
+                value={formData.bundleReduction}
+                onChange={(e) => setFormData({ ...formData, bundleReduction: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                placeholder="e.g., 45%"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                FCP Improvement
+              </label>
+              <input
+                type="text"
+                value={formData.fcpImprovement}
+                onChange={(e) => setFormData({ ...formData, fcpImprovement: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                placeholder="e.g., 32%"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                LCP Improvement
+              </label>
+              <input
+                type="text"
+                value={formData.lcpImprovement}
+                onChange={(e) => setFormData({ ...formData, lcpImprovement: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                placeholder="e.g., 28%"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                TTI Improvement
+              </label>
+              <input
+                type="text"
+                value={formData.ttiImprovement}
+                onChange={(e) => setFormData({ ...formData, ttiImprovement: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                placeholder="e.g., 41%"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Lighthouse Score Increase
+              </label>
+              <input
+                type="number"
+                value={formData.lighthouseIncrease}
+                onChange={(e) => setFormData({ ...formData, lighthouseIncrease: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+                placeholder="e.g., 23"
+                min="0"
+                max="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Related Posts Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">Related Posts</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Select blog posts that are related to this one
+            </p>
+          </div>
+          <RelatedPostsSelector
+            selectedPostIds={relatedPostIds}
+            onChange={setRelatedPostIds}
+          />
+        </div>
+
         {/* Writing Tips Card */}
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
           <h3 className="font-semibold text-blue-900 mb-2">✍️ Writing Tips</h3>
@@ -240,7 +454,8 @@ export default function NewBlogPage() {
             type="button"
             onClick={() => {
               setFormData({ ...formData, published: false });
-              handleSubmit(new Event("submit") as any);
+              // Call handler without a synthetic event to avoid casting to `any`.
+              void handleSubmit();
             }}
             disabled={isSubmitting}
             className="px-6 py-2 border border-accent-600 text-accent-600 rounded-lg hover:bg-accent-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"

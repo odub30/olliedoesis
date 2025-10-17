@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { LogOut, User, Home } from "lucide-react";
 import { useState } from "react";
 
@@ -54,10 +55,13 @@ export default function AdminHeader({ user }: AdminHeaderProps) {
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               {user.image ? (
-                <img
+                <Image
                   src={user.image}
                   alt={user.name || "User"}
-                  className="h-8 w-8 rounded-full"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                  unoptimized
                 />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-carolina flex items-center justify-center">

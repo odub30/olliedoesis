@@ -1,0 +1,1 @@
+// Placeholder test file (JSX removed). The real test lives in Home.test.tsx.

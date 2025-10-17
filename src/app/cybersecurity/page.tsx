@@ -12,8 +12,6 @@ import {
   Key,
   ArrowLeft,
   ArrowRight,
-  CheckCircle,
-  Sparkles,
   FileSearch,
   Network,
   Bug,

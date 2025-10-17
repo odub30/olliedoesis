@@ -3,13 +3,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Eye, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import { TagSelector, type Tag } from "@/components/admin/TagSelector";
+import { logError } from "@/lib/logger";
 
 export default function NewProjectPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
@@ -55,6 +58,7 @@ export default function NewProjectPage() {
         body: JSON.stringify({
           ...formData,
           technologies: technologiesArray,
+          tagIds: selectedTags.map(tag => tag.id),
         }),
       });
 
@@ -63,16 +67,17 @@ export default function NewProjectPage() {
         throw new Error(error.error || "Failed to create project");
       }
 
-      const data = await response.json();
-      toast.success("Project created successfully!");
+  // response body not required here
+  toast.success('Project created successfully!');
 
       // Redirect to projects list after short delay
       setTimeout(() => {
         router.push("/admin/projects");
       }, 1000);
-    } catch (error: any) {
-      console.error("Error creating project:", error);
-      toast.error(error.message || "Failed to create project");
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+      logError('Error creating project', err);
+      toast.error(err.message || 'Failed to create project');
     } finally {
       setIsSubmitting(false);
     }
@@ -184,6 +189,21 @@ export default function NewProjectPage() {
             />
             <p className="text-xs text-muted-foreground mt-1">
               Comma-separated list of technologies used
+            </p>
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Tags
+            </label>
+            <TagSelector
+              selectedTags={selectedTags}
+              onChange={setSelectedTags}
+              placeholder="Search or create tags..."
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Add tags to categorize your project (separate from technologies)
             </p>
           </div>
 

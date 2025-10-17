@@ -1,10 +1,9 @@
 // src/app/api/admin/blogs/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 // Validation schema for blog updates
 const blogUpdateSchema = z.object({
@@ -16,6 +15,7 @@ const blogUpdateSchema = z.object({
   featured: z.boolean().optional(),
   publishedAt: z.string().datetime().optional().or(z.literal("")).or(z.null()),
   readTime: z.number().int().positive().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 // Calculate reading time from content
@@ -83,7 +83,7 @@ export async function GET(
 
     return NextResponse.json({ blog });
   } catch (error) {
-    console.error("Error fetching blog:", error);
+    logError("Failed to fetch blog post by ID in admin API", error);
     return NextResponse.json(
       { error: "Failed to fetch blog post" },
       { status: 500 }
@@ -173,7 +173,7 @@ export async function PUT(
     }
 
     // Convert empty strings to null
-    const updateData: any = { ...data };
+    const updateData: Record<string, unknown> = { ...data };
     if (updateData.excerpt === "") updateData.excerpt = null;
     if (updateData.publishedAt === "") updateData.publishedAt = null;
     if (readTime) updateData.readTime = readTime;
@@ -181,6 +181,14 @@ export async function PUT(
 
     // Remove fields that shouldn't be sent to Prisma as-is
     delete updateData.publishedAt;
+    delete updateData.tagIds;
+
+    // Build tag update if tagIds provided
+    const tagUpdate = data.tagIds
+      ? {
+          set: data.tagIds.map((id) => ({ id })),
+        }
+      : undefined;
 
     // Update blog
     const blog = await prisma.blog.update({
@@ -188,6 +196,7 @@ export async function PUT(
       data: {
         ...updateData,
         publishedAt,
+        ...(tagUpdate && { tags: tagUpdate }),
       },
       include: {
         author: {
@@ -207,7 +216,7 @@ export async function PUT(
       blog,
     });
   } catch (error) {
-    console.error("Error updating blog:", error);
+    logError("Failed to update blog post in admin API", error);
     return NextResponse.json(
       { error: "Failed to update blog post" },
       { status: 500 }
@@ -256,7 +265,7 @@ export async function DELETE(
       message: "Blog post deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting blog:", error);
+    logError("Failed to delete blog post in admin API", error);
     return NextResponse.json(
       { error: "Failed to delete blog post" },
       { status: 500 }

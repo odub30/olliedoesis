@@ -41,7 +41,7 @@ export default function SignInPage() {
         setEmailSent(true);
         toast.success("Check your email for a sign-in link!");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -53,7 +53,7 @@ export default function SignInPage() {
     setIsLoading(true);
     try {
       await signIn(provider, { callbackUrl });
-    } catch (error) {
+    } catch {
       toast.error(`Failed to sign in with ${provider}`);
       setIsLoading(false);
     }
@@ -67,7 +67,7 @@ export default function SignInPage() {
       } else if (error === "EmailSignin") {
         toast.error("Failed to send email. Please try again.");
       } else if (error === "AccessDenied") {
-        toast.error("Access denied. You don't have permission to access this resource.");
+        toast.error("Access denied. You don\u2019t have permission to access this resource.");
       } else {
         toast.error("Authentication error. Please try again.");
       }

@@ -1,9 +1,12 @@
 // src/app/admin/media/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Upload, Image as ImageIcon, Trash2, Edit2, X, Loader2, AlertCircle } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { Upload, Image as ImageIcon, Trash2, Edit2, X, Loader2, AlertCircle, Copy, Check, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { TagSelector, type Tag } from "@/components/admin/TagSelector";
+import { logError } from "@/lib/logger";
 
 interface Image {
   id: string;
@@ -27,13 +30,12 @@ export default function MediaLibraryPage() {
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editForm, setEditForm] = useState({ alt: "", caption: "" });
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch images
-  useEffect(() => {
-    fetchImages();
-  }, [filter]);
-
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams();
@@ -45,12 +47,17 @@ export default function MediaLibraryPage() {
       const data = await response.json();
       setImages(data.images || []);
     } catch (error) {
-      console.error("Error fetching images:", error);
+      logError("Error fetching images", error);
       toast.error("Failed to load images");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filter]);
+
+  // Fetch images
+  useEffect(() => {
+    fetchImages();
+  }, [fetchImages]);
 
   const handleDelete = async (imageId: string) => {
     if (!confirm("Are you sure you want to delete this image?")) return;
@@ -65,7 +72,7 @@ export default function MediaLibraryPage() {
       toast.success("Image deleted successfully");
       fetchImages();
     } catch (error) {
-      console.error("Error deleting image:", error);
+      logError("Error deleting image", error);
       toast.error("Failed to delete image");
     }
   };
@@ -76,6 +83,7 @@ export default function MediaLibraryPage() {
       alt: image.alt,
       caption: image.caption || "",
     });
+    setSelectedTags(image.tags);
     setIsEditModalOpen(true);
   };
 
@@ -83,6 +91,46 @@ export default function MediaLibraryPage() {
     setIsEditModalOpen(false);
     setSelectedImage(null);
     setEditForm({ alt: "", caption: "" });
+    setSelectedTags([]);
+    setIsSaving(false);
+  };
+
+  const handleSave = async () => {
+    if (!selectedImage) return;
+
+    setIsSaving(true);
+
+    try {
+      const response = await fetch("/api/admin/upload", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: selectedImage.id,
+          alt: editForm.alt,
+          caption: editForm.caption,
+          tagIds: selectedTags.map(tag => tag.id),
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update image");
+
+      toast.success("Image updated successfully!");
+      closeEditModal();
+      fetchImages();
+    } catch (error) {
+      logError("Error updating image", error);
+      toast.error("Failed to update image");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopiedUrl(url);
+      toast.success("URL copied to clipboard!");
+      setTimeout(() => setCopiedUrl(null), 2000);
+    });
   };
 
   const formatFileSize = (bytes: number | null) => {
@@ -93,10 +141,25 @@ export default function MediaLibraryPage() {
   };
 
   const filteredImages = images.filter((img) => {
-    if (filter === "all") return true;
-    if (filter === "projects") return img.project !== null;
-    if (filter === "blogs") return img.blog !== null;
-    if (filter === "unattached") return img.project === null && img.blog === null;
+    // Apply category filter
+    let passesFilter = true;
+    if (filter === "all") passesFilter = true;
+    else if (filter === "projects") passesFilter = img.project !== null;
+    else if (filter === "blogs") passesFilter = img.blog !== null;
+    else if (filter === "unattached") passesFilter = img.project === null && img.blog === null;
+
+    if (!passesFilter) return false;
+
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesAlt = img.alt.toLowerCase().includes(query);
+      const matchesCaption = img.caption?.toLowerCase().includes(query);
+      const matchesTags = img.tags.some(tag => tag.name.toLowerCase().includes(query));
+
+      return matchesAlt || matchesCaption || matchesTags;
+    }
+
     return true;
   });
 
@@ -125,6 +188,20 @@ export default function MediaLibraryPage() {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by alt text, caption, or tags..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 outline-none"
+          />
+        </div>
+      </div>
+
       {/* Filter Tabs */}
       <div className="flex gap-2 border-b border-gray-200">
         {[
@@ -135,7 +212,7 @@ export default function MediaLibraryPage() {
         ].map((tab) => (
           <button
             key={tab.value}
-            onClick={() => setFilter(tab.value as any)}
+            onClick={() => setFilter(tab.value as 'all' | 'projects' | 'blogs' | 'unattached')}
             className={`px-4 py-2 font-medium transition-colors border-b-2 ${
               filter === tab.value
                 ? "border-accent-600 text-accent-600"
@@ -177,14 +254,26 @@ export default function MediaLibraryPage() {
             >
               {/* Image Preview */}
               <div className="relative aspect-video bg-gray-100 overflow-hidden">
-                <img
+                <Image
                   src={image.url}
                   alt={image.alt}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
                 {/* Overlay Actions */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <button
+                    onClick={() => copyToClipboard(image.url)}
+                    className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
+                    title="Copy URL"
+                  >
+                    {copiedUrl === image.url ? (
+                      <Check className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-700" />
+                    )}
+                  </button>
                   <button
                     onClick={() => openEditModal(image)}
                     className="p-2 bg-white rounded-lg hover:bg-gray-100 transition-colors"
@@ -223,9 +312,20 @@ export default function MediaLibraryPage() {
                   <span>{formatFileSize(image.size)}</span>
                 </div>
 
+                {/* Tags */}
+                {image.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-gray-100">
+                    {image.tags.map(tag => (
+                      <span key={tag.id} className="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
                 {/* Attachments */}
                 {(image.project || image.blog) && (
-                  <div className="mt-2 pt-2 border-t border-gray-100">
+                  <div className="mt-2 pt-2 border-t border-gray-100 flex flex-wrap gap-1">
                     {image.project && (
                       <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
                         Project: {image.project.title}
@@ -262,11 +362,13 @@ export default function MediaLibraryPage() {
             {/* Modal Content */}
             <div className="p-6 space-y-4">
               {/* Image Preview */}
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                <img
+              <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                <Image
                   src={selectedImage.url}
                   alt={selectedImage.alt}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
 
@@ -296,6 +398,20 @@ export default function MediaLibraryPage() {
                     rows={3}
                     placeholder="Optional caption"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Tags
+                  </label>
+                  <TagSelector
+                    selectedTags={selectedTags}
+                    onChange={setSelectedTags}
+                    placeholder="Add tags to categorize this image..."
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Tags help organize and filter images
+                  </p>
                 </div>
 
                 {/* Image Details */}
@@ -332,19 +448,41 @@ export default function MediaLibraryPage() {
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
               <button
+                onClick={() => copyToClipboard(selectedImage.url)}
+                className="mr-auto px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"
+              >
+                {copiedUrl === selectedImage.url ? (
+                  <>
+                    <Check className="h-4 w-4 text-green-600" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy URL
+                  </>
+                )}
+              </button>
+              <button
                 onClick={closeEditModal}
-                className="px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                disabled={isSaving}
+                className="px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  toast.success("Image edit functionality coming soon!");
-                  closeEditModal();
-                }}
-                className="px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
+                onClick={handleSave}
+                disabled={isSaving || !editForm.alt.trim()}
+                className="px-6 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Save Changes
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </button>
             </div>
           </div>

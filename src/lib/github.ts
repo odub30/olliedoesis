@@ -1,4 +1,6 @@
 // src/lib/github.ts
+import { logError } from '@/lib/logger';
+
 interface GitHubRepo {
   id: number;
   name: string;
@@ -49,7 +51,7 @@ const getHeaders = () => ({
 
 export async function getGitHubUser(): Promise<GitHubUser | null> {
   if (!GITHUB_USERNAME) {
-    console.error('GitHub username not configured');
+    logError('GitHub username not configured in environment variables', new Error('Missing GITHUB_USERNAME'));
     return null;
   }
 
@@ -65,14 +67,14 @@ export async function getGitHubUser(): Promise<GitHubUser | null> {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching GitHub user:', error);
+    logError('Failed to fetch GitHub user data', error);
     return null;
   }
 }
 
 export async function getGitHubRepos(): Promise<GitHubRepo[]> {
   if (!GITHUB_USERNAME) {
-    console.error('GitHub username not configured');
+    logError('GitHub username not configured in environment variables', new Error('Missing GITHUB_USERNAME'));
     return [];
   }
 
@@ -96,7 +98,7 @@ export async function getGitHubRepos(): Promise<GitHubRepo[]> {
       repo.visibility === 'public'
     );
   } catch (error) {
-    console.error('Error fetching GitHub repos:', error);
+    logError('Failed to fetch GitHub repositories', error);
     return [];
   }
 }

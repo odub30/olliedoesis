@@ -14,7 +14,7 @@ export async function requireAdmin() {
   }
 
   if (session.user.role !== "ADMIN") {
-    redirect("/");
+    redirect("/auth/error?error=AccessDenied");
   }
 
   return session;

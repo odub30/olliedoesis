@@ -3,8 +3,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Clock, TrendingUp, X, Loader2, FileText, FolderKanban, Image as ImageIcon, Tag } from "lucide-react";
+import { Search, Clock, X, Loader2, FileText, FolderKanban, Image as ImageIcon, Tag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { logError } from "@/lib/logger";
 
 interface SearchResult {
   id: string;
@@ -44,7 +45,7 @@ export default function GlobalSearch() {
       try {
         setRecentSearches(JSON.parse(saved));
       } catch (e) {
-        console.error("Failed to parse recent searches:", e);
+        logError("Failed to parse recent searches", e);
       }
     }
   }, []);
@@ -104,7 +105,7 @@ export default function GlobalSearch() {
       const data = await response.json();
       setResults(data.results || { projects: [], blogs: [], images: [], tags: [] });
     } catch (error) {
-      console.error("Search error:", error);
+      logError("Search error", error);
       setResults({ projects: [], blogs: [], images: [], tags: [] });
     } finally {
       setIsLoading(false);

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Loader2, FolderKanban, FileText, ImageIcon, Tag, SlidersHorizontal } from "lucide-react";
 import SearchCard from "@/components/search/SearchCard";
+import { logError } from "@/lib/logger";
 
 export default function SearchPage() {
   const router = useRouter();
@@ -18,7 +19,28 @@ export default function SearchPage() {
   const [category, setCategory] = useState(initialCategory);
   const [sort, setSort] = useState(initialSort);
   const [page, setPage] = useState(initialPage);
-  const [results, setResults] = useState<any>(null);
+  type SearchTag = { name: string }
+  type SearchResult = {
+    id: string
+    type: "image" | "blog" | "project" | "tag"
+    title?: string
+    name?: string
+    alt?: string
+    url?: string
+    description?: string
+    excerpt?: string
+    tags?: SearchTag[]
+    technologies?: string[]
+    views?: number
+    readTime?: number
+    count?: number
+    publishedAt?: string | null
+    createdAt?: string | null
+    featured?: boolean
+  }
+  type SearchResults = { all: SearchResult[] }
+
+  const [results, setResults] = useState<SearchResults | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [totalResults, setTotalResults] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -55,7 +77,7 @@ export default function SearchPage() {
 
       if (data.results) {
         // Apply client-side sorting if needed
-        const allResults: any[] = [];
+        const allResults: SearchResult[] = [];
 
         // Combine all results
         if (data.results.projects) allResults.push(...data.results.projects);
@@ -79,8 +101,9 @@ export default function SearchPage() {
         setTotalResults(data.total || 0);
         setTotalPages(data.totalPages || 0);
       }
-    } catch (error) {
-      console.error("Search error:", error);
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error))
+      logError('Search error', err);
     } finally {
       setIsLoading(false);
     }
@@ -99,14 +122,14 @@ export default function SearchPage() {
     if (query) {
       performSearch(query, category, page);
     }
-  }, [query, category, page, performSearch, router]);
+  }, [query, category, page, performSearch, router, sort]);
 
   // Re-search when sort changes
   useEffect(() => {
     if (query) {
       performSearch(query, category, page);
     }
-  }, [sort]);
+  }, [sort, performSearch, query, category, page]);
 
   // Handle search form submission
   const handleSearch = (e: React.FormEvent) => {
@@ -131,7 +154,7 @@ export default function SearchPage() {
         }),
       });
     } catch (error) {
-      console.error("Failed to track click:", error);
+      logError("Failed to track click", error);
     }
   };
 
@@ -296,23 +319,23 @@ export default function SearchPage() {
         {results && totalResults > 0 && !isLoading && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {results.all.map((item: any) => (
+              {results.all.map((item: SearchResult) => (
                 <SearchCard
                   key={`${item.type}-${item.id}`}
                   id={item.id}
-                  title={item.title || item.name || item.alt}
+                  title={item.title || item.name || item.alt || "Untitled"}
                   type={item.type}
-                  url={item.url}
+                  url={item.url || "#"}
                   description={item.description}
                   excerpt={item.excerpt}
                   thumbnail={item.type === "image" ? item.url : undefined}
-                  tags={item.tags?.map((t: any) => t.name) || []}
+                  tags={item.tags?.map((t: SearchTag) => t.name) || []}
                   technologies={item.technologies || []}
                   views={item.views}
                   readTime={item.readTime}
                   count={item.count}
-                  publishedAt={item.publishedAt}
-                  createdAt={item.createdAt}
+                  publishedAt={item.publishedAt || undefined}
+                  createdAt={item.createdAt || undefined}
                   featured={item.featured}
                   query={query}
                   onClickTrack={handleResultClick}

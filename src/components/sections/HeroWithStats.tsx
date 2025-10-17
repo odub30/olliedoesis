@@ -77,6 +77,7 @@ export function Hero() {
                 src="/images/avatar.jpg"
                 alt="Your Name"
                 fill
+                sizes="128px"
                 className="object-cover"
                 priority
                 onError={(e) => {

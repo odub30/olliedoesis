@@ -1,10 +1,10 @@
 // src/app/api/search/route.ts - Enhanced Search API with Relevance Ranking
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import crypto from "crypto";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
+import type { ProjectResultRaw, BlogResultRaw, ImageResultRaw, TagResultRaw } from '@/types/db'
 
 /**
  * Enhanced Search API with:
@@ -196,7 +196,7 @@ export async function GET(request: NextRequest) {
         take: limit * 2, // Get more for ranking
       });
 
-      const projectResults = projects.map(p => {
+      const projectResults = projects.map((p: ProjectResultRaw) => {
         const result: SearchResult = {
           ...p,
           type: "project",
@@ -239,7 +239,7 @@ export async function GET(request: NextRequest) {
         take: limit * 2,
       });
 
-      const blogResults = blogs.map(b => {
+      const blogResults = blogs.map((b: BlogResultRaw) => {
         const result: SearchResult = {
           ...b,
           excerpt: b.excerpt || undefined,
@@ -279,7 +279,7 @@ export async function GET(request: NextRequest) {
         take: limit,
       });
 
-      const imageResults = images.map(i => ({
+      const imageResults = images.map((i: ImageResultRaw) => ({
         ...i,
         title: i.alt,
         description: i.caption || undefined,
@@ -317,7 +317,7 @@ export async function GET(request: NextRequest) {
         take: limit,
       });
 
-      const tagResults = tags.map(t => ({
+      const tagResults = tags.map((t: TagResultRaw) => ({
         ...t,
         title: t.name,
         type: "tag",
@@ -341,12 +341,27 @@ export async function GET(request: NextRequest) {
     const paginatedResults = allResults.slice(skip, skip + limit);
 
     // Group results by type for response
-    const results = {
-      projects: paginatedResults.filter(r => r.type === "project").map(({ score, content, ...rest }) => rest),
-      blogs: paginatedResults.filter(r => r.type === "blog").map(({ score, content, ...rest }) => rest),
-      images: paginatedResults.filter(r => r.type === "image").map(({ score, ...rest }) => rest),
-      tags: paginatedResults.filter(r => r.type === "tag").map(({ score, ...rest }) => rest),
-    };
+      // Helper to omit fields without leaving unused bindings
+      function omit<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+        const copy: Record<string, unknown> = { ...obj }
+        for (const k of keys) delete copy[k as string]
+        return copy as Omit<T, K>
+      }
+
+      const results = {
+        projects: paginatedResults
+          .filter((r) => r.type === "project")
+          .map((r) => omit(r as unknown as Record<string, unknown>, ["score", "content"])),
+        blogs: paginatedResults
+          .filter((r) => r.type === "blog")
+          .map((r) => omit(r as unknown as Record<string, unknown>, ["score", "content"])),
+        images: paginatedResults
+          .filter((r) => r.type === "image")
+          .map((r) => omit(r as unknown as Record<string, unknown>, ["score"])),
+        tags: paginatedResults
+          .filter((r) => r.type === "tag")
+          .map((r) => omit(r as unknown as Record<string, unknown>, ["score"])),
+      };
 
     // Log search analytics asynchronously
     prisma.searchHistory
@@ -381,7 +396,7 @@ export async function GET(request: NextRequest) {
           },
         });
       })
-      .catch((err) => console.error("Failed to log search analytics:", err));
+  .catch((err: unknown) => logError("Failed to log search analytics", err));
 
     return NextResponse.json({
       results,
@@ -391,7 +406,7 @@ export async function GET(request: NextRequest) {
       category,
     });
   } catch (error) {
-    console.error("Search API error:", error);
+    logError("Search API error occurred", error);
     return NextResponse.json(
       { error: "An error occurred while searching. Please try again." },
       { status: 500 }

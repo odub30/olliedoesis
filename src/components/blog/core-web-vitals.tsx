@@ -29,7 +29,7 @@ export function CoreWebVitals() {
     <section className="mb-16">
       <h2 className="text-3xl font-bold tracking-tight mb-6">Core Web Vitals</h2>
       <p className="text-lg leading-relaxed text-muted-foreground mb-6">
-        All Core Web Vitals pass Google's thresholds with significant room to spare, ensuring excellent user experience
+        All Core Web Vitals pass Google&apos;s thresholds with significant room to spare, ensuring excellent user experience
         and search engine rankings.
       </p>
       <div className="grid gap-6 md:grid-cols-3">

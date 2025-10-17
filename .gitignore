@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# Environment variables
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -40,11 +41,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Environment variables (additional security)
-.env.local
-.env.production
-.env.development
-
 # IDE and editor files
 .vscode/
 .idea/
@@ -52,8 +48,6 @@ next-env.d.ts
 *.swo
 
 # OS generated files
-.DS_Store
-.DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
@@ -63,46 +57,13 @@ Thumbs.db
 # Logs
 logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Optional: Exclude sensitive content
 content/drafts/private/
 public/images/private/
 
-# Environment variables (additional security)
-.env.local
-.env.production
-.env.development
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Optional: Exclude sensitive content
-content/drafts/private/
-public/images/private/
+# Prisma generated
+/src/generated/prisma
 
 .vercel
 .env*.local
-
-/src/generated/prisma

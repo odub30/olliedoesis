@@ -26,10 +26,10 @@ export function BlogFAQSection({
   const handleToggle = (id: string | number, isOpen: boolean) => {
     if (isOpen && typeof window !== 'undefined') {
       // Track with your analytics (Google Analytics, Plausible, etc.)
-      // @ts-ignore
-      if (window.gtag) {
-        // @ts-ignore
-        window.gtag('event', 'faq_opened', {
+      // Use a safe runtime guard instead of @ts-ignore so ESLint/TS can reason about types.
+      const anyWindow = window as Window & { gtag?: (...args: unknown[]) => void };
+      if (typeof anyWindow.gtag === 'function') {
+        anyWindow.gtag('event', 'faq_opened', {
           event_category: 'engagement',
           event_label: `FAQ ${id}`,
         });

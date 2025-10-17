@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import type { Project, ProjectFilters } from '@/types/project';
+import { logError } from '@/lib/logger';
 const projectsDirectory = path.join(process.cwd(), 'src/data/projects');
 
 export async function getProjects(): Promise<Project[]> {
@@ -48,7 +49,7 @@ export async function getProjects(): Promise<Project[]> {
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
   } catch (error) {
-    console.error('Error loading projects:', error);
+    logError('Failed to load projects from markdown files', error);
     return [];
   }
 }
@@ -80,7 +81,7 @@ export async function getProject(slug: string): Promise<Project | null> {
       nextSteps: data.next_steps || [],
     } as Project;
   } catch (error) {
-    console.error(`Error loading project ${slug}:`, error);
+    logError(`Failed to load project from markdown file`, error, { slug });
     return null;
   }
 }

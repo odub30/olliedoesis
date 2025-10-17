@@ -1,10 +1,9 @@
 // src/app/api/admin/upload/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 /**
  * Admin API for Image Upload Management
@@ -76,7 +75,17 @@ export async function POST(request: NextRequest) {
     const data = validation.data;
 
     // Prepare data for database
-    const imageData: any = {
+    const imageData: {
+      url: string;
+      alt: string;
+      caption: string | null;
+      width: number | null;
+      height: number | null;
+      format: string | null;
+      size: number | null;
+      projectId?: string;
+      blogId?: string;
+    } = {
       url: data.url,
       alt: data.alt,
       caption: data.caption || null,
@@ -108,7 +117,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error uploading image:", error);
+    logError("Failed to upload image in admin API", error);
     return NextResponse.json(
       { error: "Failed to upload image" },
       { status: 500 }
@@ -137,7 +146,11 @@ export async function GET(request: NextRequest) {
     const unattached = searchParams.get("unattached");
 
     // Build where clause
-    const where: any = {};
+    const where: {
+      projectId?: string | null;
+      blogId?: string | null;
+      AND?: Array<{ projectId: null } | { blogId: null }>;
+    } = {};
 
     if (projectId) {
       where.projectId = projectId;
@@ -190,9 +203,96 @@ export async function GET(request: NextRequest) {
       total: images.length,
     });
   } catch (error) {
-    console.error("Error fetching images:", error);
+    logError("Failed to fetch images in admin API", error);
     return NextResponse.json(
       { error: "Failed to fetch images" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * PUT /api/admin/upload
+ * Update image metadata (alt text, caption, tags)
+ */
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session || session.user?.role !== "ADMIN") {
+      return NextResponse.json(
+        { error: "Unauthorized - Admin access required" },
+        { status: 403 }
+      );
+    }
+
+    const body = await request.json();
+    const { id, alt, caption, tagIds } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Image ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Check if image exists
+    const existingImage = await prisma.image.findUnique({
+      where: { id },
+    });
+
+    if (!existingImage) {
+      return NextResponse.json(
+        { error: "Image not found" },
+        { status: 404 }
+      );
+    }
+
+    // Prepare update data
+    const updateData: {
+      alt?: string;
+      caption?: string | null;
+      tags?: { set: Array<{ id: string }> };
+    } = {};
+
+    if (alt !== undefined) {
+      updateData.alt = alt;
+    }
+
+    if (caption !== undefined) {
+      updateData.caption = caption || null;
+    }
+
+    // Handle tags
+    if (tagIds !== undefined && Array.isArray(tagIds)) {
+      updateData.tags = {
+        set: tagIds.map((tagId: string) => ({ id: tagId })),
+      };
+    }
+
+    // Update image
+    const image = await prisma.image.update({
+      where: { id },
+      data: updateData,
+      include: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({
+      message: "Image updated successfully",
+      image,
+    });
+  } catch (error) {
+    logError("Failed to update image in admin API", error);
+    return NextResponse.json(
+      { error: "Failed to update image" },
       { status: 500 }
     );
   }
@@ -252,7 +352,7 @@ export async function DELETE(request: NextRequest) {
       message: "Image deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting image:", error);
+    logError("Failed to delete image in admin API", error);
     return NextResponse.json(
       { error: "Failed to delete image" },
       { status: 500 }

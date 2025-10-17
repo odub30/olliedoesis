@@ -6,7 +6,6 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://olliedoesis.dev'),
   title: 'Ollie Does Is - Web Developer & Cybersecurity Student',

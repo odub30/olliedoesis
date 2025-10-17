@@ -4,21 +4,21 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
-// Authentication Models
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -37,20 +37,19 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String          @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?         @unique
   emailVerified DateTime?
   image         String?
-  role          Role      @default(PUBLIC)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
+  role          Role            @default(PUBLIC)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   accounts      Account[]
-  sessions      Session[]
-  projects      Project[]
   blogs         Blog[]
+  projects      Project[]
   searchHistory SearchHistory[]
+  sessions      Session[]
 }
 
 model VerificationToken {
@@ -61,33 +60,26 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-enum Role {
-  PUBLIC
-  ADMIN
-}
-
-// Content Models
 model Project {
-  id            String    @id @default(cuid())
-  title         String
-  slug          String    @unique
-  description   String
-  content       String    @db.Text
-  technologies  String[]
-  liveUrl       String?
-  githubUrl     String?
-  featured      Boolean   @default(false)
-  published     Boolean   @default(false)
-  views         Int       @default(0)
-  order         Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  author        User      @relation(fields: [authorId], references: [id])
-  authorId      String
-  tags          Tag[]
-  images        Image[]
-  
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  description  String
+  content      String
+  technologies String[]
+  liveUrl      String?
+  githubUrl    String?
+  featured     Boolean  @default(false)
+  published    Boolean  @default(false)
+  views        Int      @default(0)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  authorId     String
+  images       Image[]
+  author       User     @relation(fields: [authorId], references: [id])
+  tags         Tag[]    @relation("ProjectToTag")
+
   @@index([title, description])
   @@index([slug])
   @@index([published, featured])
@@ -95,32 +87,47 @@ model Project {
 }
 
 model Blog {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  excerpt     String?
-  content     String    @db.Text
-  published   Boolean   @default(false)
-  featured    Boolean   @default(false)
-  views       Int       @default(0)
-  readTime    Int?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  publishedAt DateTime?
-  
-  author      User      @relation(fields: [authorId], references: [id])
-  authorId    String
-  tags        Tag[]
-  images      Image[]
-  
+  id             String         @id @default(cuid())
+  title          String
+  slug           String         @unique
+  excerpt        String?
+  content        String
+  published      Boolean        @default(false)
+  featured       Boolean        @default(false)
+  views          Int            @default(0)
+  readTime       Int?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  publishedAt    DateTime?
+  authorId       String
+
+  // New fields for enhanced blog system
+  category       String?        // Main category (e.g., "Frontend Development")
+  githubRepo     String?        // GitHub repository URL
+  lastUpdated    DateTime?      // Last content update (separate from updatedAt)
+  keywords       String[]       // SEO keywords array
+  relatedPostIds String[]       // Array of related blog post IDs
+
+  // Relations
+  author         User           @relation(fields: [authorId], references: [id])
+  images         Image[]
+  tags           Tag[]          @relation("BlogToTag")
+  codeExamples   CodeExample[]
+  faqs           BlogFAQ[]
+  metrics        BlogMetrics?
+
   @@index([title, excerpt])
   @@index([slug])
   @@index([published, featured])
   @@index([publishedAt])
+  @@index([published, publishedAt])  // For homepage/list queries
+  @@index([authorId, published])     // For author-specific queries
+  @@index([authorId])                // For author lookups
+  @@index([category])                // For category filtering
 }
 
 model Image {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   url         String
   alt         String
   caption     String?
@@ -128,15 +135,14 @@ model Image {
   height      Int?
   format      String?
   size        Int?
-  blurDataUrl String?   @db.Text
-  createdAt   DateTime  @default(now())
-  
+  blurDataUrl String?
+  createdAt   DateTime @default(now())
   projectId   String?
-  project     Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   blogId      String?
-  blog        Blog?     @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  tags        Tag[]
-  
+  blog        Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tags        Tag[]    @relation("ImageToTag")
+
   @@index([alt, caption])
   @@index([projectId])
   @@index([blogId])
@@ -148,17 +154,15 @@ model Tag {
   slug      String    @unique
   count     Int       @default(0)
   createdAt DateTime  @default(now())
-  
-  projects  Project[]
-  blogs     Blog[]
-  images    Image[]
-  
+  blogs     Blog[]    @relation("BlogToTag")
+  images    Image[]   @relation("ImageToTag")
+  projects  Project[] @relation("ProjectToTag")
+
   @@index([name])
   @@index([slug])
   @@index([count])
 }
 
-// Search & Analytics Models
 model SearchHistory {
   id            String   @id @default(cuid())
   query         String
@@ -166,25 +170,26 @@ model SearchHistory {
   results       Int
   clickedResult String?
   userId        String?
-  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   ipHash        String?
   userAgent     String?
   createdAt     DateTime @default(now())
-  
+  user          User?    @relation(fields: [userId], references: [id])
+
   @@index([query])
   @@index([userId])
   @@index([createdAt])
   @@index([category])
+  @@index([createdAt, category])  // For analytics queries by date and category
 }
 
 model SearchAnalytics {
-  id            String   @id @default(cuid())
-  query         String   @unique
-  searchCount   Int      @default(1)
-  clickCount    Int      @default(0)
-  lastSearched  DateTime @default(now())
-  avgResults    Float    @default(0)
-  
+  id           String   @id @default(cuid())
+  query        String   @unique
+  searchCount  Int      @default(1)
+  clickCount   Int      @default(0)
+  lastSearched DateTime @default(now())
+  avgResults   Float    @default(0)
+
   @@index([searchCount])
   @@index([lastSearched])
   @@index([clickCount])
@@ -199,7 +204,53 @@ model PageView {
   userAgent String?
   country   String?
   createdAt DateTime @default(now())
-  
+
   @@index([path])
   @@index([createdAt])
+}
+
+// Code examples for blog posts (StackBlitz, CodeSandbox, GitHub)
+model CodeExample {
+  id        String   @id @default(cuid())
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  title     String
+  url       String
+  type      String   // 'stackblitz' | 'codesandbox' | 'github' | 'other'
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([blogId])
+  @@index([order])
+}
+
+// FAQ sections for blog posts
+model BlogFAQ {
+  id        String   @id @default(cuid())
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  question  String
+  answer    String   @db.Text
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([blogId])
+  @@index([order])
+}
+
+// Performance metrics for blog posts
+model BlogMetrics {
+  id                 String  @id @default(cuid())
+  blogId             String  @unique
+  blog               Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  bundleReduction    String? // e.g., "45%"
+  fcpImprovement     String? // First Contentful Paint
+  lcpImprovement     String? // Largest Contentful Paint
+  ttiImprovement     String? // Time to Interactive
+  lighthouseIncrease Int?    // Lighthouse score improvement
+}
+
+enum Role {
+  PUBLIC
+  ADMIN
 }

@@ -73,8 +73,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate total usage count for each tag
-    type TagEntry = typeof tags[number]
-    const tagsWithUsage = tags.map((tag: TagEntry) => ({
+    const tagsWithUsage = tags.map((tag: any) => ({
       ...tag,
       totalUsage: tag._count.projects + tag._count.blogs + tag._count.images,
     }));

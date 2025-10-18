@@ -145,7 +145,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Fill in actual counts
-      searchesByDate.forEach((item) => {
+      searchesByDate.forEach((item: any) => {
         const dateStr = new Date(item.createdAt).toISOString().split("T")[0];
         if (dateMap.has(dateStr)) {
           dateMap.set(dateStr, (dateMap.get(dateStr) || 0) + item._count._all);

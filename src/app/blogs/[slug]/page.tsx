@@ -82,7 +82,34 @@ async function getBlog(slug: string) {
   return blog;
 }
 
-async function getRelatedBlogs(currentBlogId: string, relatedPostIds: string[], tags: string[], limit = 3) {
+type RelatedBlog = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  publishedAt: Date | null;
+  readTime: number | null;
+  views: number;
+  tags: Array<{ name: string; slug: string }>;
+};
+
+async function getRelatedBlogs(currentBlogId: string, relatedPostIds: string[], tags: string[], limit = 3): Promise<RelatedBlog[]> {
+  const selectFields = {
+    id: true,
+    title: true,
+    slug: true,
+    excerpt: true,
+    publishedAt: true,
+    readTime: true,
+    views: true,
+    tags: {
+      select: {
+        name: true,
+        slug: true,
+      },
+    },
+  } as const;
+
   // First, try to get explicitly related posts
   if (relatedPostIds && relatedPostIds.length > 0) {
     const explicitRelated = await prisma.blog.findMany({
@@ -90,16 +117,9 @@ async function getRelatedBlogs(currentBlogId: string, relatedPostIds: string[], 
         id: { in: relatedPostIds },
         published: true,
       },
-      include: {
-        tags: {
-          select: {
-            name: true,
-            slug: true,
-          },
-        },
-      },
+      select: selectFields,
       take: limit,
-    });
+    }) as unknown as RelatedBlog[];
 
     if (explicitRelated.length >= limit) {
       return explicitRelated;
@@ -125,19 +145,12 @@ async function getRelatedBlogs(currentBlogId: string, relatedPostIds: string[], 
             },
           ],
         },
-        include: {
-          tags: {
-            select: {
-              name: true,
-              slug: true,
-            },
-          },
-        },
+        select: selectFields,
         take: remaining,
         orderBy: {
           views: "desc",
         },
-      });
+      }) as unknown as RelatedBlog[];
 
       return [...explicitRelated, ...tagBased];
     }
@@ -164,19 +177,12 @@ async function getRelatedBlogs(currentBlogId: string, relatedPostIds: string[], 
         },
       ],
     },
-    include: {
-      tags: {
-        select: {
-          name: true,
-          slug: true,
-        },
-      },
-    },
+    select: selectFields,
     take: limit,
     orderBy: {
       views: "desc",
     },
-  });
+  }) as unknown as RelatedBlog[];
 
   return relatedBlogs;
 }

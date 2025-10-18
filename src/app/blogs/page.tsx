@@ -11,6 +11,23 @@ export const metadata: Metadata = {
   description: "Articles and insights on web development, cybersecurity, and technology.",
 };
 
+type BlogTag = {
+  name: string;
+  slug: string;
+};
+
+type Blog = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  featured: boolean;
+  publishedAt: Date | null;
+  readTime: number | null;
+  views: number;
+  tags: BlogTag[];
+};
+
 async function getPublishedBlogs() {
   const blogs = await prisma.blog.findMany({
     where: {
@@ -43,7 +60,7 @@ async function getPublishedBlogs() {
       { publishedAt: "desc" },
     ],
     take: 50, // Limit results for better performance
-  });
+  }) as unknown as Blog[];
 
   return blogs;
 }

@@ -10,6 +10,9 @@ import {
   Plus,
 } from "lucide-react";
 
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic';
+
 async function getDashboardStats() {
   const [
     projectsCount,

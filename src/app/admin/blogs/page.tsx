@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Eye, Edit, Trash2, ExternalLink, Clock } from "lucide-react";
 
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic';
+
 async function getBlogs() {
   return await prisma.blog.findMany({
     orderBy: { updatedAt: "desc" },

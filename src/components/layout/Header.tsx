@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Code, Github, Linkedin, Mail, Moon, Sun } from 'lucide-react';
-import GlobalSearch from '@/components/search/GlobalSearch';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +33,7 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/articles', label: 'Articles' },
+    { href: '/blogs', label: 'Blogs' },
     { href: '/web-development', label: 'Web Dev' },
     { href: '/cybersecurity', label: 'Security' },
     { href: '/projects', label: 'Projects' },
@@ -87,9 +86,6 @@ export default function Header() {
 
           {/* Actions (Desktop) */}
           <div className="hidden md:flex items-center space-x-2">
-            {/* Search Component (with Cmd+K shortcut) */}
-            <GlobalSearch />
-
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -137,11 +133,6 @@ export default function Header() {
 
           {/* Mobile Actions */}
           <div className="md:hidden flex items-center space-x-2">
-            {/* Search Component (with Cmd+K shortcut) */}
-            <div className="scale-90">
-              <GlobalSearch />
-            </div>
-
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}

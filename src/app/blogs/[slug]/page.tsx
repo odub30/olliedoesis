@@ -207,7 +207,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       description: blog.excerpt || blog.title,
       type: "article",
       publishedTime: blog.publishedAt?.toISOString(),
-      modifiedTime: blog.lastUpdated?.toISOString() || blog.updatedAt.toISOString(),
+      modifiedTime: blog.updatedAt.toISOString(),
       authors: blog.author.name ? [blog.author.name] : undefined,
       tags: blog.tags.map((tag) => tag.name),
     },

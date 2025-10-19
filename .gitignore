@@ -67,3 +67,4 @@ public/images/private/
 
 .vercel
 .env*.local
+nul

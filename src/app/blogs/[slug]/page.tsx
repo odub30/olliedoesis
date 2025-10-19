@@ -2,14 +2,13 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Calendar, Clock, Eye, ArrowLeft, User, Github } from "lucide-react";
+import { Calendar, Clock, Eye, ArrowLeft, User } from "lucide-react";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
 import type { Metadata } from "next";
 import { getBlogFAQs } from "@/data/blog-faqs";
 import { BlogFAQSection } from "@/components/blog/BlogFAQSection";
-import { CodeExamplesSection } from "@/components/blog/CodeExamplesSection";
-import { MetricsDisplay } from "@/components/blog/MetricsDisplay";
+import { CodeBlock } from "@/components/code-block";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import type { TagEntry } from '@/types/db'
 
@@ -71,7 +70,6 @@ async function getBlog(slug: string) {
           order: "asc",
         },
       },
-      metrics: true,
     },
   });
 
@@ -349,19 +347,6 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     ))}
                   </div>
                 )}
-                {blog.githubRepo && (
-                  <div>
-                    <a
-                      href={blog.githubRepo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-full transition-colors"
-                    >
-                      <Github className="h-4 w-4" />
-                      <span>View on GitHub</span>
-                    </a>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -382,15 +367,16 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
               {/* Code Examples Section */}
               {blog.codeExamples && blog.codeExamples.length > 0 && (
-                <div className="mt-16">
-                  <CodeExamplesSection examples={blog.codeExamples} />
-                </div>
-              )}
-
-              {/* Performance Metrics */}
-              {blog.metrics && (
-                <div className="mt-16">
-                  <MetricsDisplay metrics={blog.metrics} />
+                <div className="mt-16 space-y-6">
+                  <h2 className="text-3xl font-bold tracking-tight mb-6">Code Examples</h2>
+                  {blog.codeExamples.map((example) => (
+                    <CodeBlock
+                      key={example.id}
+                      code={example.code}
+                      language={example.language}
+                      title={example.title || example.filename || undefined}
+                    />
+                  ))}
                 </div>
               )}
 

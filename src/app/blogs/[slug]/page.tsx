@@ -200,9 +200,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: `${blog.title} | Ollie Doesis`,
     description: blog.excerpt || blog.title,
-    keywords: blog.keywords && blog.keywords.length > 0 ? blog.keywords : undefined,
+    keywords: blog.metaKeywords || undefined,
     authors: blog.author.name ? [{ name: blog.author.name }] : undefined,
-    category: blog.category || undefined,
     openGraph: {
       title: blog.title,
       description: blog.excerpt || blog.title,

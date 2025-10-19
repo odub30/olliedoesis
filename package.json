@@ -2,6 +2,9 @@
   "name": "olliedoesis",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "test": "jest",
@@ -17,6 +20,7 @@
     "clean": "rm -rf .next out",
     "optimize:image": "node scripts/optimize-images.js",
     "optimize:batch": "node scripts/optimize-images.js --batch",
+    "db:seed": "npx prisma db seed",
     "db:seed:blog": "npx ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seed-first-blog.ts",
     "migrate:blogs": "npx ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} scripts/migrate-blog-content.ts",
     "verify:auth": "npx ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} scripts/verify-auth.ts"
@@ -26,11 +30,23 @@
     "@prisma/client": "^6.17.1",
     "@prisma/extension-accelerate": "^2.0.2",
     "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-label": "^2.1.1",
     "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-switch": "^1.1.2",
+    "@tiptap/extension-color": "^2.10.5",
+    "@tiptap/extension-image": "^2.10.5",
+    "@tiptap/extension-link": "^2.10.5",
+    "@tiptap/extension-placeholder": "^2.10.5",
+    "@tiptap/extension-text-align": "^2.10.5",
+    "@tiptap/extension-text-style": "^2.10.5",
+    "@tiptap/extension-underline": "^2.10.5",
+    "@tiptap/react": "^2.10.5",
+    "@tiptap/starter-kit": "^2.10.5",
     "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "^2.0.0",
     "@vercel/og": "^0.8.5",
@@ -86,6 +102,7 @@
     "prisma": "^6.17.1",
     "tailwindcss": "^3.4.17",
     "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

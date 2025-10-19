@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
             { title: { contains: sanitizedQuery, mode: "insensitive" } },
             { description: { contains: sanitizedQuery, mode: "insensitive" } },
             { content: { contains: sanitizedQuery, mode: "insensitive" } },
-            { technologies: { hasSome: [sanitizedQuery] } },
+            { techStack: { hasSome: [sanitizedQuery] } },
           ],
         },
         select: {
@@ -187,7 +187,7 @@ export async function GET(request: NextRequest) {
           slug: true,
           description: true,
           content: true,
-          technologies: true,
+          techStack: true,
           featured: true,
           views: true,
           createdAt: true,
@@ -196,20 +196,20 @@ export async function GET(request: NextRequest) {
         take: limit * 2, // Get more for ranking
       });
 
-      const projectResults = projects.map((p: ProjectResultRaw) => {
-        const result: SearchResult = {
+      const projectResults = projects.map((p) => {
+        const result = {
           ...p,
-          type: "project",
+          type: "project" as const,
         };
         return {
           ...p,
-          type: "project",
+          type: "project" as const,
           url: `/projects/${p.slug}`,
-          score: calculateRelevance(result, lowerQuery),
+          score: calculateRelevance(result as any, lowerQuery),
         };
       });
 
-      allResults.push(...projectResults);
+      allResults.push(...(projectResults as any));
     }
 
     // Search Blogs
@@ -274,12 +274,11 @@ export async function GET(request: NextRequest) {
           width: true,
           height: true,
           createdAt: true,
-          tags: { select: { name: true } },
         },
         take: limit,
       });
 
-      const imageResults = images.map((i: ImageResultRaw) => ({
+      const imageResults = images.map((i) => ({
         ...i,
         title: i.alt,
         description: i.caption || undefined,
@@ -287,15 +286,14 @@ export async function GET(request: NextRequest) {
         url: i.url,
         score: calculateRelevance({
           id: i.id,
-          title: i.alt,
+          title: i.alt || "",
           description: i.caption || undefined,
           createdAt: i.createdAt,
-          tags: i.tags,
           type: "image",
-        }, lowerQuery),
+        } as any, lowerQuery),
       }));
 
-      allResults.push(...imageResults);
+      allResults.push(...(imageResults as any));
     }
 
     // Search Tags
@@ -311,13 +309,12 @@ export async function GET(request: NextRequest) {
           id: true,
           name: true,
           slug: true,
-          count: true,
           createdAt: true,
         },
         take: limit,
       });
 
-      const tagResults = tags.map((t: TagResultRaw) => ({
+      const tagResults = tags.map((t) => ({
         ...t,
         title: t.name,
         type: "tag",
@@ -327,10 +324,10 @@ export async function GET(request: NextRequest) {
           title: t.name,
           createdAt: t.createdAt,
           type: "tag",
-        }, lowerQuery) + (t.count * 0.1), // Boost popular tags
+        }, lowerQuery),
       }));
 
-      allResults.push(...tagResults);
+      allResults.push(...(tagResults as any));
     }
 
     // Sort by relevance score (highest first)
@@ -368,10 +365,7 @@ export async function GET(request: NextRequest) {
       .create({
         data: {
           query: sanitizedQuery,
-          category: category,
           results: total,
-          ipHash: ipHash,
-          userAgent: request.headers.get("user-agent") || undefined,
         },
       })
       .then(async () => {

@@ -159,7 +159,7 @@ export default async function AdminProjectsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {project.technologies.slice(0, 3).map((tech: string) => (
+                        {project.techStack.slice(0, 3).map((tech: string) => (
                           <span
                             key={tech}
                             className="px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded"
@@ -167,9 +167,9 @@ export default async function AdminProjectsPage() {
                             {tech}
                           </span>
                         ))}
-                        {project.technologies.length > 3 && (
+                        {project.techStack.length > 3 && (
                           <span className="px-2 py-0.5 text-xs text-muted-foreground">
-                            +{project.technologies.length - 3}
+                            +{project.techStack.length - 3}
                           </span>
                         )}
                       </div>

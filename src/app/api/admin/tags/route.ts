@@ -62,12 +62,10 @@ export async function GET(request: NextRequest) {
           select: {
             projects: true,
             blogs: true,
-            images: true,
           },
         },
       },
       orderBy: [
-        { count: "desc" },
         { name: "asc" },
       ],
     });
@@ -142,7 +140,6 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         slug: data.slug,
-        count: 0,
       },
     });
 
@@ -292,7 +289,6 @@ export async function DELETE(request: NextRequest) {
           select: {
             projects: true,
             blogs: true,
-            images: true,
           },
         },
       },
@@ -306,7 +302,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Check if tag is in use
-    const totalUsage = existingTag._count.projects + existingTag._count.blogs + existingTag._count.images;
+    const totalUsage = existingTag._count.projects + existingTag._count.blogs;
 
     if (totalUsage > 0) {
       return NextResponse.json(

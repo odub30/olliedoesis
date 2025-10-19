@@ -36,7 +36,7 @@ export interface AdminProject {
   slug: string;
   title: string;
   description?: string | null;
-  technologies: string[];
+  techStack: string[];
   featured?: boolean | null;
   published?: boolean | null;
   views: number;
@@ -56,7 +56,7 @@ export interface ProjectResultRaw {
   slug: string;
   description?: string;
   content?: string;
-  technologies: string[];
+  techStack: string[];
   featured?: boolean;
   views: number;
   createdAt: Date;
@@ -85,13 +85,11 @@ export interface ImageResultRaw {
   width?: number | null;
   height?: number | null;
   createdAt: Date;
-  tags?: Array<{ name: string }>;
 }
 
 export interface TagResultRaw {
   id: string;
   name: string;
   slug: string;
-  count: number;
   createdAt: Date;
 }

@@ -142,7 +142,7 @@ The `src/app/gallery/` folder was not committed to Git, so even after fixing the
    | Field | Value |
    |-------|-------|
    | **Name** | `BLOB_READ_WRITE_TOKEN` |
-   | **Value** | `vercel_blob_rw_cmwftDzghQ2dUtiZ_KSBSHBmnRnN3WC7mShsLfTVtfNZCrQ` |
+   | **Value** | `vercel_blob_rw_KsufLDLCRHxiWHsX_BDLm36Tgjkse9X98avGHfVi0ejVQ2B` |
    | **Environment** | ✅ Production<br>✅ Preview<br>✅ Development |
 
 4. **Save the variable**

@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
     const days = searchParams.get("days");
 
     // Calculate date filter
-    let dateFilter: { createdAt?: { gte: Date } } = {};
+    let dateFilter: { searchedAt?: { gte: Date } } = {};
     if (days && days !== "all") {
       const daysAgo = parseInt(days);
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - daysAgo);
       dateFilter = {
-        createdAt: {
+        searchedAt: {
           gte: startDate,
         },
       };
@@ -70,9 +70,9 @@ export async function GET(request: NextRequest) {
           results: 0,
           ...dateFilter,
         },
-        select: { query: true, createdAt: true },
+        select: { query: true, searchedAt: true },
         take: 10,
-        orderBy: { createdAt: "desc" },
+        orderBy: { searchedAt: "desc" },
         distinct: ["query"],
       }),
 
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       prisma.searchHistory.findMany({
         where: dateFilter,
         take: 20,
-        orderBy: { createdAt: "desc" },
+        orderBy: { searchedAt: "desc" },
       }),
 
       // Top viewed projects
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
 
       // Get searches grouped by date
       const searchesByDate = await prisma.searchHistory.groupBy({
-        by: ["createdAt"],
+        by: ["searchedAt"],
         where: dateFilter,
         _count: {
           _all: true,
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
 
       // Fill in actual counts
       searchesByDate.forEach((item: any) => {
-        const dateStr = new Date(item.createdAt).toISOString().split("T")[0];
+        const dateStr = new Date(item.searchedAt).toISOString().split("T")[0];
         if (dateMap.has(dateStr)) {
           dateMap.set(dateStr, (dateMap.get(dateStr) || 0) + item._count._all);
         }

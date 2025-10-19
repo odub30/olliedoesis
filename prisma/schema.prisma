@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,23 +10,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================
+// AUTHENTICATION & USER MANAGEMENT
+// ============================================
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String?
-  access_token      String?
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?
+  id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
+  @@map("accounts")
 }
 
 model Session {
@@ -34,22 +43,32 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@map("sessions")
 }
 
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?         @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          Role            @default(PUBLIC)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  accounts      Account[]
-  blogs         Blog[]
-  projects      Project[]
-  searchHistory SearchHistory[]
-  sessions      Session[]
+  password      String?   // Hashed password for email/password auth
+  role          String    @default("user") // user, admin, editor
+  bio           String?   @db.Text
+  website       String?
+  github        String?
+  twitter       String?
+  linkedin      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  blogs    Blog[]
+  projects Project[]
+
+  @@index([email])
+  @@map("users")
 }
 
 model VerificationToken {
@@ -58,199 +77,397 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
-model Project {
-  id           String   @id @default(cuid())
-  title        String
-  slug         String   @unique
-  description  String
-  content      String
-  technologies String[]
-  liveUrl      String?
-  githubUrl    String?
-  featured     Boolean  @default(false)
-  published    Boolean  @default(false)
-  views        Int      @default(0)
-  order        Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  authorId     String
-  images       Image[]
-  author       User     @relation(fields: [authorId], references: [id])
-  tags         Tag[]    @relation("ProjectToTag")
-
-  @@index([title, description])
-  @@index([slug])
-  @@index([published, featured])
-  @@index([order])
-}
+// ============================================
+// CONTENT MANAGEMENT
+// ============================================
 
 model Blog {
-  id             String         @id @default(cuid())
-  title          String
-  slug           String         @unique
-  excerpt        String?
-  content        String
-  published      Boolean        @default(false)
-  featured       Boolean        @default(false)
-  views          Int            @default(0)
-  readTime       Int?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  publishedAt    DateTime?
-  authorId       String
-
-  // New fields for enhanced blog system
-  category       String?        // Main category (e.g., "Frontend Development")
-  githubRepo     String?        // GitHub repository URL
-  lastUpdated    DateTime?      // Last content update (separate from updatedAt)
-  keywords       String[]       // SEO keywords array
-  relatedPostIds String[]       // Array of related blog post IDs
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?   @db.Text
+  excerpt     String?   @db.Text
+  content     String    @db.Text
+  coverImage  String?
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
+  likes       Int       @default(0)
+  readTime    Int       @default(5) // in minutes
+  
+  // SEO Fields
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  
+  // Timestamps
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relations
-  author         User           @relation(fields: [authorId], references: [id])
-  images         Image[]
-  tags           Tag[]          @relation("BlogToTag")
-  codeExamples   CodeExample[]
-  faqs           BlogFAQ[]
-  metrics        BlogMetrics?
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  tags          Tag[]
+  images        Image[]
+  codeExamples  CodeExample[]
+  faqs          BlogFAQ[]
+  metrics       BlogMetrics?
+  pageViews     PageView[]
+  searchHistory SearchHistory[]
 
-  @@index([title, excerpt])
   @@index([slug])
-  @@index([published, featured])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([published])
+  @@index([featured])
   @@index([publishedAt])
-  @@index([published, publishedAt])  // For homepage/list queries
-  @@index([authorId, published])     // For author-specific queries
-  @@index([authorId])                // For author lookups
-  @@index([category])                // For category filtering
+  @@index([createdAt])
+  @@map("blogs")
 }
 
-model Image {
+model Category {
   id          String   @id @default(cuid())
-  url         String
-  alt         String
-  caption     String?
-  width       Int?
-  height      Int?
-  format      String?
-  size        Int?
-  blurDataUrl String?
+  name        String   @unique
+  slug        String   @unique
+  description String?  @db.Text
+  color       String?  // Hex color for UI
+  icon        String?  // Icon name or emoji
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
-  projectId   String?
-  blogId      String?
-  blog        Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tags        Tag[]    @relation("ImageToTag")
+  updatedAt   DateTime @updatedAt
 
-  @@index([alt, caption])
-  @@index([projectId])
-  @@index([blogId])
+  blogs    Blog[]
+  projects Project[]
+
+  @@index([slug])
+  @@map("categories")
 }
 
 model Tag {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  slug      String    @unique
-  count     Int       @default(0)
-  createdAt DateTime  @default(now())
-  blogs     Blog[]    @relation("BlogToTag")
-  images    Image[]   @relation("ImageToTag")
-  projects  Project[] @relation("ProjectToTag")
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  color     String?  // Hex color for badges
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([name])
+  blogs    Blog[]
+  projects Project[]
+
   @@index([slug])
-  @@index([count])
+  @@map("tags")
 }
 
-model SearchHistory {
-  id            String   @id @default(cuid())
-  query         String
-  category      String?
-  results       Int
-  clickedResult String?
-  userId        String?
-  ipHash        String?
-  userAgent     String?
-  createdAt     DateTime @default(now())
-  user          User?    @relation(fields: [userId], references: [id])
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String   @db.Text
+  content     String?  @db.Text
+  coverImage  String?
+  thumbnail   String?
+  demoUrl     String?
+  githubUrl   String?
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  views       Int      @default(0)
+  
+  // Tech Stack
+  techStack String[] // Array of technologies used
+  
+  // Timestamps
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  @@index([query])
-  @@index([userId])
-  @@index([createdAt])
-  @@index([category])
-  @@index([createdAt, category])  // For analytics queries by date and category
+  // Relations
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  
+  tags      Tag[]
+  images    Image[]
+  pageViews PageView[]
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([categoryId])
+  @@index([published])
+  @@index([featured])
+  @@map("projects")
 }
 
-model SearchAnalytics {
-  id           String   @id @default(cuid())
-  query        String   @unique
-  searchCount  Int      @default(1)
-  clickCount   Int      @default(0)
-  lastSearched DateTime @default(now())
-  avgResults   Float    @default(0)
-
-  @@index([searchCount])
-  @@index([lastSearched])
-  @@index([clickCount])
-}
-
-model PageView {
+model Image {
   id        String   @id @default(cuid())
-  path      String
-  title     String?
-  referrer  String?
-  ipHash    String?
-  userAgent String?
-  country   String?
-  createdAt DateTime @default(now())
-
-  @@index([path])
-  @@index([createdAt])
-}
-
-// Code examples for blog posts (StackBlitz, CodeSandbox, GitHub)
-model CodeExample {
-  id        String   @id @default(cuid())
-  blogId    String
-  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  title     String
   url       String
-  type      String   // 'stackblitz' | 'codesandbox' | 'github' | 'other'
-  order     Int      @default(0)
+  alt       String?
+  caption   String?
+  width     Int?
+  height    Int?
+  size      Int?     // File size in bytes
+  format    String?  // jpg, png, webp, etc.
+  blurHash  String?  // For blur placeholder
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations (polymorphic-style)
+  blogId    String?
+  blog      Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([blogId])
-  @@index([order])
+  @@index([projectId])
+  @@map("images")
 }
 
-// FAQ sections for blog posts
+// ============================================
+// BLOG FEATURES
+// ============================================
+
+model CodeExample {
+  id        String   @id @default(cuid())
+  title     String?
+  code      String   @db.Text
+  language  String   @default("javascript") // Language for syntax highlighting
+  filename  String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogId String
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@index([blogId])
+  @@map("code_examples")
+}
+
 model BlogFAQ {
   id        String   @id @default(cuid())
-  blogId    String
-  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  question  String
+  question  String   @db.Text
   answer    String   @db.Text
   order     Int      @default(0)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogId String
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
 
   @@index([blogId])
-  @@index([order])
+  @@map("blog_faqs")
 }
 
-// Performance metrics for blog posts
 model BlogMetrics {
-  id                 String  @id @default(cuid())
-  blogId             String  @unique
-  blog               Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  bundleReduction    String? // e.g., "45%"
-  fcpImprovement     String? // First Contentful Paint
-  lcpImprovement     String? // Largest Contentful Paint
-  ttiImprovement     String? // Time to Interactive
-  lighthouseIncrease Int?    // Lighthouse score improvement
+  id String @id @default(cuid())
+
+  // Engagement Metrics
+  views            Int      @default(0)
+  uniqueViews      Int      @default(0)
+  likes            Int      @default(0)
+  shares           Int      @default(0)
+  comments         Int      @default(0)
+  bookmarks        Int      @default(0)
+  
+  // Time Metrics
+  avgReadTime      Int      @default(0) // in seconds
+  totalReadTime    Int      @default(0) // in seconds
+  bounceRate       Float    @default(0) // percentage
+  
+  // SEO Metrics
+  organicViews     Int      @default(0)
+  directViews      Int      @default(0)
+  referralViews    Int      @default(0)
+  socialViews      Int      @default(0)
+  
+  // Conversion Metrics
+  clickThroughs    Int      @default(0)
+  conversions      Int      @default(0)
+  conversionRate   Float    @default(0) // percentage
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  blogId String @unique
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@index([blogId])
+  @@map("blog_metrics")
 }
 
-enum Role {
-  PUBLIC
-  ADMIN
+// ============================================
+// ANALYTICS & TRACKING
+// ============================================
+
+model PageView {
+  id        String   @id @default(cuid())
+  
+  // Page Info
+  path      String
+  title     String?
+  referrer  String?
+  
+  // User Info
+  userId    String?
+  sessionId String?
+  
+  // Device Info
+  userAgent String?  @db.Text
+  browser   String?
+  os        String?
+  device    String?  // mobile, tablet, desktop
+  
+  // Location Info
+  country   String?
+  city      String?
+  region    String?
+  
+  // Engagement
+  duration  Int?     // Time spent on page in seconds
+  
+  // Timestamps
+  viewedAt  DateTime @default(now())
+
+  // Relations
+  blogId    String?
+  blog      Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([blogId])
+  @@index([projectId])
+  @@index([path])
+  @@index([sessionId])
+  @@index([viewedAt])
+  @@map("page_views")
+}
+
+model SearchHistory {
+  id        String   @id @default(cuid())
+  query     String
+  results   Int      @default(0) // Number of results found
+  clicked   Boolean  @default(false) // Whether user clicked a result
+  
+  // User Info
+  userId    String?
+  sessionId String?
+  
+  // Context
+  source    String?  // Where search was initiated (header, blog-page, etc.)
+  filters   Json?    // Any filters applied (category, tags, etc.)
+  
+  // Timestamps
+  searchedAt DateTime @default(now())
+
+  // Relations
+  blogId String?
+  blog   Blog?  @relation(fields: [blogId], references: [id], onDelete: SetNull)
+
+  @@index([query])
+  @@index([sessionId])
+  @@index([searchedAt])
+  @@index([blogId])
+  @@map("search_history")
+}
+
+model SearchAnalytics {
+  id        String   @id @default(cuid())
+  
+  // Search Term
+  query     String   @unique
+  
+  // Metrics
+  searchCount    Int      @default(1)
+  clickCount     Int      @default(0)
+  avgResults     Float    @default(0)
+  clickRate      Float    @default(0) // percentage
+  
+  // Top Results
+  topResultIds   String[] // Array of blog/project IDs
+  
+  // Timestamps
+  firstSearched  DateTime @default(now())
+  lastSearched   DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([query])
+  @@index([searchCount])
+  @@index([lastSearched])
+  @@map("search_analytics")
+}
+
+// ============================================
+// UTILITY MODELS
+// ============================================
+
+model Newsletter {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  subscribed  Boolean  @default(true)
+  verified    Boolean  @default(false)
+  source      String?  // Where they subscribed from
+  
+  // Preferences
+  frequency   String   @default("weekly") // daily, weekly, monthly
+  categories  String[] // Which categories they're interested in
+  
+  // Timestamps
+  subscribedAt DateTime @default(now())
+  verifiedAt   DateTime?
+  unsubscribedAt DateTime?
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+  @@index([subscribed])
+  @@map("newsletter")
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  message   String   @db.Text
+  phone     String?
+  company   String?
+  
+  // Status
+  status    String   @default("new") // new, read, replied, archived
+  priority  String   @default("normal") // low, normal, high, urgent
+  
+  // Metadata
+  userAgent String?  @db.Text
+  ip        String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+  repliedAt DateTime?
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("contacts")
+}
+
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("site_settings")
 }

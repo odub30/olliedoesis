@@ -224,13 +224,6 @@ export async function GET(request: NextRequest) {
             slug: true,
           },
         },
-        tags: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
       },
       orderBy: {
         createdAt: "desc",
@@ -313,15 +306,6 @@ export async function PUT(request: NextRequest) {
     const image = await prisma.image.update({
       where: { id },
       data: updateData,
-      include: {
-        tags: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-          },
-        },
-      },
     });
 
     return NextResponse.json({

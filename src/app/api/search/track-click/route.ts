@@ -61,10 +61,9 @@ export async function POST(request: NextRequest) {
     await prisma.searchHistory.updateMany({
       where: {
         query: sanitizedQuery,
-        clickedResult: null,
       },
       data: {
-        clickedResult: clickedResult,
+        clicked: true,
       },
     });
 

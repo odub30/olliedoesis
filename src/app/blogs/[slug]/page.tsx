@@ -42,6 +42,12 @@ async function getBlog(slug: string) {
           image: true,
         },
       },
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
       tags: {
         select: {
           name: true,
@@ -326,7 +332,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   <div>
                     <span className="text-xs text-muted-foreground mr-2">Category:</span>
                     <span className="px-4 py-2 bg-primary/10 text-primary-700 text-sm font-semibold rounded-full">
-                      {blog.category}
+                      {blog.category.name}
                     </span>
                   </div>
                 )}

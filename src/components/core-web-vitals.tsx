@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export function CoreWebVitals() {
+export function CoreWebVitals({ id, className }: { id?: string; className?: string } = {}) {
   const vitals = [
     {
       name: "Largest Contentful Paint (LCP)",
@@ -26,7 +26,10 @@ export function CoreWebVitals() {
   ]
 
   return (
-    <section id="core-web-vitals" className="mb-16 scroll-mt-16">
+    <section
+      id={id}
+      className={`mb-16 ${id ? 'scroll-mt-16' : ''} ${className || ''}`}
+    >
       <h2 className="text-3xl font-bold tracking-tight mb-6">Core Web Vitals</h2>
       <p className="text-lg leading-relaxed text-muted-foreground mb-6">
         All Core Web Vitals pass Google&apos;s thresholds with significant room to spare, ensuring excellent user experience

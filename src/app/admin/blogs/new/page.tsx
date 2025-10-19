@@ -3,15 +3,45 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
-import { TagSelector, type Tag } from "@/components/admin/TagSelector";
+import type { Tag } from "@/components/admin/TagSelector";
 import { KeywordsInput } from "@/components/admin/KeywordsInput";
-import { CodeExamplesManager, type CodeExample } from "@/components/admin/CodeExamplesManager";
-import { FAQManager, type FAQ } from "@/components/admin/FAQManager";
+import type { CodeExample } from "@/components/admin/CodeExamplesManager";
+import type { FAQ } from "@/components/admin/FAQManager";
 import { RelatedPostsSelector } from "@/components/admin/RelatedPostsSelector";
 import { logError } from "@/lib/logger";
+import { generateSlug } from "@/lib/utils";
+
+// Lazy load heavy admin components for better bundle size
+const TagSelector = dynamic(
+  () => import("@/components/admin/TagSelector").then(mod => ({ default: mod.TagSelector })),
+  {
+    loading: () => (
+      <div className="w-full h-10 bg-gray-100 rounded-lg animate-pulse" />
+    ),
+  }
+);
+
+const CodeExamplesManager = dynamic(
+  () => import("@/components/admin/CodeExamplesManager").then(mod => ({ default: mod.CodeExamplesManager })),
+  {
+    loading: () => (
+      <div className="w-full h-32 bg-gray-100 rounded-lg animate-pulse" />
+    ),
+  }
+);
+
+const FAQManager = dynamic(
+  () => import("@/components/admin/FAQManager").then(mod => ({ default: mod.FAQManager })),
+  {
+    loading: () => (
+      <div className="w-full h-32 bg-gray-100 rounded-lg animate-pulse" />
+    ),
+  }
+);
 
 export default function NewBlogPage() {
   const router = useRouter();
@@ -38,14 +68,6 @@ export default function NewBlogPage() {
     ttiImprovement: "",
     lighthouseIncrease: "",
   });
-
-  // Auto-generate slug from title
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  };
 
   const handleTitleChange = (title: string) => {
     setFormData({

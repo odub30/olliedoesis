@@ -34,6 +34,7 @@ export default function Header() {
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/blogs', label: 'Blogs' },
+    { href: '/gallery', label: 'Gallery' },
     { href: '/web-development', label: 'Web Dev' },
     { href: '/cybersecurity', label: 'Security' },
     { href: '/projects', label: 'Projects' },

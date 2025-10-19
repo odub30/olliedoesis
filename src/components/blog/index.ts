@@ -5,7 +5,7 @@ export { BlogHeader } from './blog-header';
 export { TechStackOverview } from './tech-stack-overview';
 export { FrameworkComparison } from './framework-comparison';
 export { BundleSizeChart } from './bundle-size-chart';
-export { CoreWebVitals } from './core-web-vitals';
+export { CoreWebVitals } from '../core-web-vitals'; // Re-export from root components
 export { FAQSection } from './faq-section';
 
 // Blog Enhancement Components

@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Clock, X, Loader2, FileText, FolderKanban, Image as ImageIcon, Tag } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { logError } from "@/lib/logger";
 
 interface SearchResult {
@@ -182,7 +182,7 @@ export default function GlobalSearch() {
   };
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
@@ -202,7 +202,7 @@ export default function GlobalSearch() {
         {isOpen && (
           <>
             {/* Backdrop */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -211,7 +211,7 @@ export default function GlobalSearch() {
             />
 
             {/* Modal */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
@@ -347,10 +347,10 @@ export default function GlobalSearch() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
 }

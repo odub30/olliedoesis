@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, Search, Edit2, Trash2, Save, X, Tag as TagIcon } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { logError } from "@/lib/logger";
+import { generateSlug } from "@/lib/utils";
 
 interface Tag {
   id: string;
@@ -52,14 +53,6 @@ export default function TagsManagementPage() {
   useEffect(() => {
     fetchTags();
   }, [fetchTags]);
-
-  // Auto-generate slug from name
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  };
 
   // Handle create tag
   const handleCreate = async (e: React.FormEvent) => {

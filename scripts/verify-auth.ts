@@ -6,7 +6,11 @@
  * Usage: npx ts-node scripts/verify-auth.ts
  */
 
+import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+
+// Load environment variables from .env.local
+config({ path: '.env.local' });
 
 const prisma = new PrismaClient();
 
@@ -30,7 +34,7 @@ const envChecks: EnvCheck[] = [
 
 async function verifyAuth() {
   console.log('🔍 Verifying Authentication Configuration\n');
-  console.log('=' . repeat(60));
+  console.log('='.repeat(60));
 
   let hasErrors = false;
   let hasWarnings = false;
@@ -153,7 +157,7 @@ async function verifyAuth() {
   }
 
   console.log('');
-  console.log('=' . repeat(60));
+  console.log('='.repeat(60));
   console.log('\n📊 Summary:\n');
 
   if (hasErrors) {
@@ -167,7 +171,7 @@ async function verifyAuth() {
     console.log('⚠️  WARNINGS - Configuration is functional but has some issues');
     console.log('\nOptional improvements:');
     console.log('- Consider adding optional auth providers (Google, Email)');
-    console.log('- Verify you&apos;re using production URL if deploying');
+    console.log("- Verify you're using production URL if deploying");
   } else {
     console.log('✅ ALL CHECKS PASSED - Auth configuration looks good!');
     console.log('\nNext steps:');

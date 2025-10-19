@@ -35,6 +35,13 @@ export default function MediaLibraryPage() {
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Upload states
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+
   const fetchImages = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -140,6 +147,92 @@ export default function MediaLibraryPage() {
     return `${(kb / 1024).toFixed(1)} MB`;
   };
 
+  // Upload handlers
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    validateAndSetFiles(files);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    validateAndSetFiles(files);
+  };
+
+  const validateAndSetFiles = (files: File[]) => {
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+    const maxSize = 4.5 * 1024 * 1024; // 4.5MB (Vercel server upload limit)
+
+    const validFiles = files.filter((file) => {
+      if (!validTypes.includes(file.type)) {
+        toast.error(`${file.name}: Invalid file type`);
+        return false;
+      }
+      if (file.size > maxSize) {
+        toast.error(`${file.name}: File too large (max 4.5MB)`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length > 0) {
+      setSelectedFiles((prev) => [...prev, ...validFiles]);
+      setIsUploadModalOpen(true);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) return;
+
+    setIsUploading(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const file of selectedFiles) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("alt", file.name.replace(/\.[^/.]+$/, "")); // Remove extension for alt text
+
+        const response = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || "Failed to upload");
+        }
+
+        successCount++;
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
+      } catch (error) {
+        logError(`Error uploading ${file.name}`, error);
+        failCount++;
+      }
+    }
+
+    // Show results
+    if (successCount > 0) {
+      toast.success(`Successfully uploaded ${successCount} image${successCount > 1 ? "s" : ""}`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to upload ${failCount} image${failCount > 1 ? "s" : ""}`);
+    }
+
+    // Reset and refresh
+    setIsUploading(false);
+    setIsUploadModalOpen(false);
+    setSelectedFiles([]);
+    setUploadProgress({});
+    fetchImages();
+  };
+
   const filteredImages = images.filter((img) => {
     // Apply category filter
     let passesFilter = true;
@@ -177,11 +270,7 @@ export default function MediaLibraryPage() {
         </div>
         <button
           className="flex items-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium"
-          onClick={() =>
-            toast("Upload functionality requires storage integration (Vercel Blob, S3, etc.)", {
-              icon: "ℹ️",
-            })
-          }
+          onClick={() => setIsUploadModalOpen(true)}
         >
           <Upload className="h-5 w-5" />
           Upload Images
@@ -489,17 +578,140 @@ export default function MediaLibraryPage() {
         </div>
       )}
 
-      {/* Info Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-        <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-        <div className="text-sm text-blue-900">
-          <p className="font-medium mb-1">Storage Integration Required</p>
-          <p className="text-blue-700">
-            To upload images, integrate with a storage provider like Vercel Blob, AWS S3, or
-            Cloudinary. The API endpoints are ready at <code className="bg-blue-100 px-1 py-0.5 rounded">/api/admin/upload</code>.
-          </p>
+      {/* Upload Modal */}
+      {isUploadModalOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-foreground">Upload Images</h2>
+              <button
+                onClick={() => {
+                  setIsUploadModalOpen(false);
+                  setSelectedFiles([]);
+                  setUploadProgress({});
+                }}
+                disabled={isUploading}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <X className="h-5 w-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              {/* Drag and Drop Zone */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  isDragging
+                    ? "border-accent-500 bg-accent-50"
+                    : "border-gray-300 hover:border-accent-400"
+                }`}
+              >
+                <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-lg font-medium text-foreground mb-2">
+                  Drag and drop images here
+                </p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  or click to browse your computer
+                </p>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  onChange={handleFileSelect}
+                  disabled={isUploading}
+                  className="hidden"
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="inline-block px-6 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg cursor-pointer transition-colors font-medium disabled:opacity-50"
+                >
+                  Select Files
+                </label>
+                <p className="text-xs text-muted-foreground mt-4">
+                  Supported: JPG, PNG, GIF, WebP • Max 4.5MB per file
+                </p>
+              </div>
+
+              {/* Selected Files List */}
+              {selectedFiles.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-medium text-foreground">
+                    Selected Files ({selectedFiles.length})
+                  </h3>
+                  <div className="max-h-60 overflow-y-auto space-y-2">
+                    {selectedFiles.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <ImageIcon className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm text-foreground truncate">
+                              {file.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {formatFileSize(file.size)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => removeFile(index)}
+                          disabled={isUploading}
+                          className="p-1 hover:bg-gray-200 rounded transition-colors disabled:opacity-50"
+                        >
+                          <X className="h-4 w-4 text-gray-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setIsUploadModalOpen(false);
+                  setSelectedFiles([]);
+                  setUploadProgress({});
+                }}
+                disabled={isUploading}
+                className="px-4 py-2 border border-gray-300 text-foreground rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpload}
+                disabled={isUploading || selectedFiles.length === 0}
+                className="px-6 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    Upload {selectedFiles.length} {selectedFiles.length === 1 ? "Image" : "Images"}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

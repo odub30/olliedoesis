@@ -1,7 +1,6 @@
 // src/app/web-development/page.tsx
 "use client";
 
-import React from 'react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
@@ -27,461 +26,6 @@ import {
   Box
 } from 'lucide-react';
 
-// =============================================
-// STATIC DATA (moved outside component for performance)
-// =============================================
-
-const techStack = [
-  {
-    category: "Frontend Framework",
-    icon: <Layout className="h-6 w-6" />,
-    color: "from-blue-500 to-cyan-500",
-    technologies: [
-      {
-        name: "Next.js 15",
-        version: "15.5.4",
-        description: "React framework with App Router and React Server Components",
-        features: [
-          "App Router architecture for optimal performance",
-          "Server Components for zero-bundle JavaScript",
-          "Streaming SSR with Suspense boundaries",
-          "Built-in Image Optimization",
-          "Dynamic OG image generation (@vercel/og)",
-          "ISR for sitemap generation"
-        ]
-      },
-      {
-        name: "React 19",
-        version: "19.1.0",
-        description: "Latest React with new concurrent features",
-        features: [
-          "Server Components & Actions",
-          "Concurrent rendering",
-          "Automatic batching",
-          "useTransition & useDeferredValue hooks",
-          "Suspense for data fetching"
-        ]
-      },
-      {
-        name: "TypeScript",
-        version: "5.x",
-        description: "Strict type safety across the entire codebase",
-        features: [
-          "Strict mode enabled",
-          "Path aliases (@/* imports)",
-          "Type-safe API routes",
-          "Zod schema validation",
-          "Zero &apos;any&apos; types in production code"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Styling & UI",
-    icon: <Palette className="h-6 w-6" />,
-    color: "from-purple-500 to-pink-500",
-    technologies: [
-      {
-        name: "Tailwind CSS",
-        version: "3.4.17",
-        description: "Utility-first CSS with custom design system",
-        features: [
-          "Custom color palette (Carolina Blue theme)",
-          "Custom animations (fade-in, slide-up, bounce-soft)",
-          "CSS variables for dynamic theming",
-          "Responsive breakpoints",
-          "Tailwind Merge for className optimization"
-        ]
-      },
-      {
-        name: "Radix UI",
-        version: "Latest",
-        description: "Unstyled, accessible component primitives",
-        features: [
-          "Accordion component",
-          "Progress indicators",
-          "Scroll Area",
-          "Select dropdowns",
-          "Full ARIA compliance"
-        ]
-      },
-      {
-        name: "Framer Motion",
-        version: "12.23.22",
-        description: "Production-ready animation library",
-        features: [
-          "Page transitions",
-          "Scroll-triggered animations",
-          "Gesture animations",
-          "Layout animations"
-        ]
-      },
-      {
-        name: "Lucide React",
-        version: "0.544.0",
-        description: "Beautiful, consistent SVG icons",
-        features: [
-          "600+ icons",
-          "Tree-shakeable",
-          "Customizable size & color",
-          "TypeScript support"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Backend & Database",
-    icon: <Database className="h-6 w-6" />,
-    color: "from-green-500 to-emerald-500",
-    technologies: [
-      {
-        name: "PostgreSQL",
-        version: "Latest",
-        description: "Production-grade relational database",
-        features: [
-          "8 normalized data models",
-          "Proper foreign key relationships",
-          "Cascade delete rules",
-          "Strategic indexes for query performance",
-          "Full-text search capabilities"
-        ]
-      },
-      {
-        name: "Prisma ORM",
-        version: "6.17.1",
-        description: "Type-safe database client with migrations",
-        features: [
-          "Type-safe queries",
-          "Database migrations",
-          "Connection pooling",
-          "Prisma Accelerate extension",
-          "Query optimization"
-        ]
-      },
-      {
-        name: "NextAuth.js v5",
-        version: "5.0.0-beta.29",
-        description: "Complete authentication solution",
-        features: [
-          "Multi-provider auth (GitHub, Google, Email)",
-          "Magic link authentication via Resend",
-          "JWT strategy for stateless auth",
-          "Role-based access control (ADMIN/PUBLIC)",
-          "Secure session management"
-        ]
-      }
-    ]
-  },
-  {
-    category: "API & Validation",
-    icon: <Server className="h-6 w-6" />,
-    color: "from-orange-500 to-red-500",
-    technologies: [
-      {
-        name: "Zod",
-        version: "4.1.12",
-        description: "TypeScript-first schema validation",
-        features: [
-          "Runtime type checking",
-          "Detailed validation errors",
-          "Type inference",
-          "Used in all API routes",
-          "Form validation"
-        ]
-      },
-      {
-        name: "API Routes",
-        version: "Native Next.js",
-        description: "RESTful API with proper error handling",
-        features: [
-          "15+ API endpoints",
-          "Input validation with Zod",
-          "Rate limiting (60 req/min search)",
-          "Error logging with Pino",
-          "Proper HTTP status codes"
-        ]
-      },
-      {
-        name: "Resend",
-        version: "6.1.2",
-        description: "Modern email API for transactional emails",
-        features: [
-          "Contact form submissions",
-          "Magic link authentication",
-          "HTML email templates",
-          "Delivery tracking"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Search & Analytics",
-    icon: <Search className="h-6 w-6" />,
-    color: "from-yellow-500 to-amber-500",
-    technologies: [
-      {
-        name: "Custom Search Engine",
-        version: "Built In-House",
-        description: "Advanced search with relevance ranking",
-        features: [
-          "Multi-entity search (Projects, Blogs, Images, Tags)",
-          "Relevance scoring algorithm",
-          "Fuzzy search with Fuse.js",
-          "Search analytics tracking",
-          "XSS prevention & sanitization"
-        ]
-      },
-      {
-        name: "Fuse.js",
-        version: "7.1.0",
-        description: "Lightweight fuzzy-search library",
-        features: [
-          "Typo tolerance",
-          "Weighted scoring",
-          "Configurable threshold",
-          "Fast client-side search"
-        ]
-      },
-      {
-        name: "Analytics",
-        version: "Custom + Vercel",
-        description: "Comprehensive usage analytics",
-        features: [
-          "Search query tracking",
-          "Page view analytics",
-          "Click-through rate calculation",
-          "Vercel Analytics integration",
-          "Speed Insights monitoring"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Security & Logging",
-    icon: <Shield className="h-6 w-6" />,
-    color: "from-red-500 to-rose-500",
-    technologies: [
-      {
-        name: "Pino Logger",
-        version: "10.0.0",
-        description: "Production-grade structured logging",
-        features: [
-          "JSON output in production",
-          "Pretty printing in development",
-          "Log levels (trace, debug, info, warn, error)",
-          "Contextual metadata",
-          "53 console statements replaced"
-        ]
-      },
-      {
-        name: "bcryptjs",
-        version: "3.0.2",
-        description: "Password hashing for secure authentication",
-        features: [
-          "Salted hashing",
-          "Configurable rounds",
-          "Rainbow table protection"
-        ]
-      },
-      {
-        name: "Security Measures",
-        version: "Multi-layered",
-        description: "Comprehensive security implementation",
-        features: [
-          "SQL injection prevention (Prisma)",
-          "XSS sanitization",
-          "CSRF protection",
-          "Rate limiting on sensitive endpoints",
-          "IP hashing for privacy compliance"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Developer Experience",
-    icon: <Terminal className="h-6 w-6" />,
-    color: "from-indigo-500 to-purple-500",
-    technologies: [
-      {
-        name: "ESLint",
-        version: "9.x",
-        description: "Code quality & consistency enforcement",
-        features: [
-          "TypeScript ESLint rules",
-          "Next.js specific rules",
-          "React Hooks rules",
-          "Prettier integration",
-          "Fails builds on errors"
-        ]
-      },
-      {
-        name: "Prettier",
-        version: "3.6.2",
-        description: "Opinionated code formatter",
-        features: [
-          "Consistent code style",
-          "100 character line width",
-          "Automatic formatting",
-          "Pre-commit hooks ready"
-        ]
-      },
-      {
-        name: "Development Tools",
-        version: "Various",
-        description: "Enhanced developer workflow",
-        features: [
-          "Hot Module Replacement",
-          "TypeScript strict mode",
-          "Path aliases",
-          "Fast Refresh",
-          "Detailed error overlays"
-        ]
-      }
-    ]
-  },
-  {
-    category: "Content & Utilities",
-    icon: <FileCode className="h-6 w-6" />,
-    color: "from-teal-500 to-cyan-500",
-    technologies: [
-      {
-        name: "Gray Matter",
-        version: "4.0.3",
-        description: "Markdown frontmatter parsing",
-        features: [
-          "YAML/TOML frontmatter",
-          "Metadata extraction",
-          "Content separation"
-        ]
-      },
-      {
-        name: "Marked",
-        version: "16.3.0",
-        description: "Markdown to HTML compiler",
-        features: [
-          "GitHub Flavored Markdown",
-          "Syntax highlighting ready",
-          "Custom renderers"
-        ]
-      },
-      {
-        name: "Reading Time",
-        version: "1.5.0",
-        description: "Automatic reading time calculation",
-        features: [
-          "Word count analysis",
-          "Configurable WPM",
-          "Accurate estimates"
-        ]
-      }
-    ]
-  }
-];
-
-const architectureFeatures = [
-  {
-    title: "Server-Side Rendering",
-    description: "React Server Components for optimal performance",
-    icon: <Server className="h-5 w-5" />,
-    benefits: ["Zero JavaScript bundle", "Instant page loads", "SEO-friendly"]
-  },
-  {
-    title: "Database Optimization",
-    description: "Strategic indexes and query optimization",
-    icon: <Database className="h-5 w-5" />,
-    benefits: ["Fast queries", "Efficient joins", "Scalable design"]
-  },
-  {
-    title: "Type Safety",
-    description: "End-to-end TypeScript with strict mode",
-    icon: <FileCode className="h-5 w-5" />,
-    benefits: ["Catch errors early", "Better IntelliSense", "Refactor with confidence"]
-  },
-  {
-    title: "Performance First",
-    description: "Optimized for Core Web Vitals",
-    icon: <Zap className="h-5 w-5" />,
-    benefits: ["Fast FCP", "Low CLS", "Quick TTI"]
-  },
-  {
-    title: "Security Hardened",
-    description: "Multiple layers of security",
-    icon: <Lock className="h-5 w-5" />,
-    benefits: ["SQL injection proof", "XSS protected", "Rate limited"]
-  },
-  {
-    title: "Production Logging",
-    description: "Structured logging with Pino",
-    icon: <Terminal className="h-5 w-5" />,
-    benefits: ["Debug faster", "Track errors", "Monitor performance"]
-  }
-];
-
-const projectStats = [
-  { label: "TypeScript Files", value: "100+", icon: <FileCode className="h-5 w-5" /> },
-  { label: "API Endpoints", value: "15+", icon: <Server className="h-5 w-5" /> },
-  { label: "Database Models", value: "8", icon: <Database className="h-5 w-5" /> },
-  { label: "UI Components", value: "50+", icon: <Box className="h-5 w-5" /> },
-  { label: "Type Safety", value: "100%", icon: <Shield className="h-5 w-5" /> },
-  { label: "Test Coverage", value: "Coming", icon: <CheckCircle className="h-5 w-5" /> }
-];
-
-// Memoized Tech Card Component for optimal performance
-const TechCard = React.memo(({
-  tech,
-  catIdx,
-  techIdx,
-  isActive,
-  onMouseEnter,
-  onMouseLeave
-}: {
-  tech: { name: string; version: string; description: string; features: string[] };
-  catIdx: number;
-  techIdx: number;
-  isActive: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-}) => {
-  return (
-    <div
-      className="group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white/10 rounded-xl p-6 shadow-xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 hover:border-white/30"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {/* Tech Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h4 className="text-xl font-bold text-carolina mb-1">{tech.name}</h4>
-          <span className="text-xs text-accent-400 font-mono">{tech.version}</span>
-        </div>
-        <Package className={`h-5 w-5 text-accent-300 transition-transform duration-300 ${
-          isActive ? 'rotate-12 scale-110' : ''
-        }`} />
-      </div>
-
-      {/* Description */}
-      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-        {tech.description}
-      </p>
-
-      {/* Features */}
-      <div className="space-y-2">
-        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-          Key Features:
-        </div>
-        {tech.features.map((feature, idx) => (
-          <div key={idx} className="flex items-start gap-2">
-            <CheckCircle className="h-3.5 w-3.5 text-accent-400 flex-shrink-0 mt-0.5" />
-            <span className="text-xs text-gray-300 leading-relaxed">{feature}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-});
-
-TechCard.displayName = 'TechCard';
-
 export default function WebDevelopmentPage() {
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -491,6 +35,400 @@ export default function WebDevelopmentPage() {
   }, []);
 
   // Core Technology Stack - What Actually Powers This Site
+  const techStack = [
+    {
+      category: "Frontend Framework",
+      icon: <Layout className="h-6 w-6" />,
+      color: "from-blue-500 to-cyan-500",
+      technologies: [
+        {
+          name: "Next.js 15",
+          version: "15.5.4",
+          description: "React framework with App Router and React Server Components",
+          features: [
+            "App Router architecture for optimal performance",
+            "Server Components for zero-bundle JavaScript",
+            "Streaming SSR with Suspense boundaries",
+            "Built-in Image Optimization",
+            "Dynamic OG image generation (@vercel/og)",
+            "ISR for sitemap generation"
+          ]
+        },
+        {
+          name: "React 19",
+          version: "19.1.0",
+          description: "Latest React with new concurrent features",
+          features: [
+            "Server Components & Actions",
+            "Concurrent rendering",
+            "Automatic batching",
+            "useTransition & useDeferredValue hooks",
+            "Suspense for data fetching"
+          ]
+        },
+        {
+          name: "TypeScript",
+          version: "5.x",
+          description: "Strict type safety across the entire codebase",
+          features: [
+            "Strict mode enabled",
+            "Path aliases (@/* imports)",
+            "Type-safe API routes",
+            "Zod schema validation",
+            "Zero &apos;any&apos; types in production code"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Styling & UI",
+      icon: <Palette className="h-6 w-6" />,
+      color: "from-purple-500 to-pink-500",
+      technologies: [
+        {
+          name: "Tailwind CSS",
+          version: "3.4.17",
+          description: "Utility-first CSS with custom design system",
+          features: [
+            "Custom color palette (Carolina Blue theme)",
+            "Custom animations (fade-in, slide-up, bounce-soft)",
+            "CSS variables for dynamic theming",
+            "Responsive breakpoints",
+            "Tailwind Merge for className optimization"
+          ]
+        },
+        {
+          name: "Radix UI",
+          version: "Latest",
+          description: "Unstyled, accessible component primitives",
+          features: [
+            "Accordion component",
+            "Progress indicators",
+            "Scroll Area",
+            "Select dropdowns",
+            "Full ARIA compliance"
+          ]
+        },
+        {
+          name: "Framer Motion",
+          version: "12.23.22",
+          description: "Production-ready animation library",
+          features: [
+            "Page transitions",
+            "Scroll-triggered animations",
+            "Gesture animations",
+            "Layout animations"
+          ]
+        },
+        {
+          name: "Lucide React",
+          version: "0.544.0",
+          description: "Beautiful, consistent SVG icons",
+          features: [
+            "600+ icons",
+            "Tree-shakeable",
+            "Customizable size & color",
+            "TypeScript support"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Backend & Database",
+      icon: <Database className="h-6 w-6" />,
+      color: "from-green-500 to-emerald-500",
+      technologies: [
+        {
+          name: "PostgreSQL",
+          version: "Latest",
+          description: "Production-grade relational database",
+          features: [
+            "8 normalized data models",
+            "Proper foreign key relationships",
+            "Cascade delete rules",
+            "Strategic indexes for query performance",
+            "Full-text search capabilities"
+          ]
+        },
+        {
+          name: "Prisma ORM",
+          version: "6.17.1",
+          description: "Type-safe database client with migrations",
+          features: [
+            "Type-safe queries",
+            "Database migrations",
+            "Connection pooling",
+            "Prisma Accelerate extension",
+            "Query optimization"
+          ]
+        },
+        {
+          name: "NextAuth.js v5",
+          version: "5.0.0-beta.29",
+          description: "Complete authentication solution",
+          features: [
+            "Multi-provider auth (GitHub, Google, Email)",
+            "Magic link authentication via Resend",
+            "JWT strategy for stateless auth",
+            "Role-based access control (ADMIN/PUBLIC)",
+            "Secure session management"
+          ]
+        }
+      ]
+    },
+    {
+      category: "API & Validation",
+      icon: <Server className="h-6 w-6" />,
+      color: "from-orange-500 to-red-500",
+      technologies: [
+        {
+          name: "Zod",
+          version: "4.1.12",
+          description: "TypeScript-first schema validation",
+          features: [
+            "Runtime type checking",
+            "Detailed validation errors",
+            "Type inference",
+            "Used in all API routes",
+            "Form validation"
+          ]
+        },
+        {
+          name: "API Routes",
+          version: "Native Next.js",
+          description: "RESTful API with proper error handling",
+          features: [
+            "15+ API endpoints",
+            "Input validation with Zod",
+            "Rate limiting (60 req/min search)",
+            "Error logging with Pino",
+            "Proper HTTP status codes"
+          ]
+        },
+        {
+          name: "Resend",
+          version: "6.1.2",
+          description: "Modern email API for transactional emails",
+          features: [
+            "Contact form submissions",
+            "Magic link authentication",
+            "HTML email templates",
+            "Delivery tracking"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Search & Analytics",
+      icon: <Search className="h-6 w-6" />,
+      color: "from-yellow-500 to-amber-500",
+      technologies: [
+        {
+          name: "Custom Search Engine",
+          version: "Built In-House",
+          description: "Advanced search with relevance ranking",
+          features: [
+            "Multi-entity search (Projects, Blogs, Images, Tags)",
+            "Relevance scoring algorithm",
+            "Fuzzy search with Fuse.js",
+            "Search analytics tracking",
+            "XSS prevention & sanitization"
+          ]
+        },
+        {
+          name: "Fuse.js",
+          version: "7.1.0",
+          description: "Lightweight fuzzy-search library",
+          features: [
+            "Typo tolerance",
+            "Weighted scoring",
+            "Configurable threshold",
+            "Fast client-side search"
+          ]
+        },
+        {
+          name: "Analytics",
+          version: "Custom + Vercel",
+          description: "Comprehensive usage analytics",
+          features: [
+            "Search query tracking",
+            "Page view analytics",
+            "Click-through rate calculation",
+            "Vercel Analytics integration",
+            "Speed Insights monitoring"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Security & Logging",
+      icon: <Shield className="h-6 w-6" />,
+      color: "from-red-500 to-rose-500",
+      technologies: [
+        {
+          name: "Pino Logger",
+          version: "10.0.0",
+          description: "Production-grade structured logging",
+          features: [
+            "JSON output in production",
+            "Pretty printing in development",
+            "Log levels (trace, debug, info, warn, error)",
+            "Contextual metadata",
+            "53 console statements replaced"
+          ]
+        },
+        {
+          name: "bcryptjs",
+          version: "3.0.2",
+          description: "Password hashing for secure authentication",
+          features: [
+            "Salted hashing",
+            "Configurable rounds",
+            "Rainbow table protection"
+          ]
+        },
+        {
+          name: "Security Measures",
+          version: "Multi-layered",
+          description: "Comprehensive security implementation",
+          features: [
+            "SQL injection prevention (Prisma)",
+            "XSS sanitization",
+            "CSRF protection",
+            "Rate limiting on sensitive endpoints",
+            "IP hashing for privacy compliance"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Developer Experience",
+      icon: <Terminal className="h-6 w-6" />,
+      color: "from-indigo-500 to-purple-500",
+      technologies: [
+        {
+          name: "ESLint",
+          version: "9.x",
+          description: "Code quality & consistency enforcement",
+          features: [
+            "TypeScript ESLint rules",
+            "Next.js specific rules",
+            "React Hooks rules",
+            "Prettier integration",
+            "Fails builds on errors"
+          ]
+        },
+        {
+          name: "Prettier",
+          version: "3.6.2",
+          description: "Opinionated code formatter",
+          features: [
+            "Consistent code style",
+            "100 character line width",
+            "Automatic formatting",
+            "Pre-commit hooks ready"
+          ]
+        },
+        {
+          name: "Development Tools",
+          version: "Various",
+          description: "Enhanced developer workflow",
+          features: [
+            "Hot Module Replacement",
+            "TypeScript strict mode",
+            "Path aliases",
+            "Fast Refresh",
+            "Detailed error overlays"
+          ]
+        }
+      ]
+    },
+    {
+      category: "Content & Utilities",
+      icon: <FileCode className="h-6 w-6" />,
+      color: "from-teal-500 to-cyan-500",
+      technologies: [
+        {
+          name: "Gray Matter",
+          version: "4.0.3",
+          description: "Markdown frontmatter parsing",
+          features: [
+            "YAML/TOML frontmatter",
+            "Metadata extraction",
+            "Content separation"
+          ]
+        },
+        {
+          name: "Marked",
+          version: "16.3.0",
+          description: "Markdown to HTML compiler",
+          features: [
+            "GitHub Flavored Markdown",
+            "Syntax highlighting ready",
+            "Custom renderers"
+          ]
+        },
+        {
+          name: "Reading Time",
+          version: "1.5.0",
+          description: "Automatic reading time calculation",
+          features: [
+            "Word count analysis",
+            "Configurable WPM",
+            "Accurate estimates"
+          ]
+        }
+      ]
+    }
+  ];
+
+  const architectureFeatures = [
+    {
+      title: "Server-Side Rendering",
+      description: "React Server Components for optimal performance",
+      icon: <Server className="h-5 w-5" />,
+      benefits: ["Zero JavaScript bundle", "Instant page loads", "SEO-friendly"]
+    },
+    {
+      title: "Database Optimization",
+      description: "Strategic indexes and query optimization",
+      icon: <Database className="h-5 w-5" />,
+      benefits: ["Fast queries", "Efficient joins", "Scalable design"]
+    },
+    {
+      title: "Type Safety",
+      description: "End-to-end TypeScript with strict mode",
+      icon: <FileCode className="h-5 w-5" />,
+      benefits: ["Catch errors early", "Better IntelliSense", "Refactor with confidence"]
+    },
+    {
+      title: "Performance First",
+      description: "Optimized for Core Web Vitals",
+      icon: <Zap className="h-5 w-5" />,
+      benefits: ["Fast FCP", "Low CLS", "Quick TTI"]
+    },
+    {
+      title: "Security Hardened",
+      description: "Multiple layers of security",
+      icon: <Lock className="h-5 w-5" />,
+      benefits: ["SQL injection proof", "XSS protected", "Rate limited"]
+    },
+    {
+      title: "Production Logging",
+      description: "Structured logging with Pino",
+      icon: <Terminal className="h-5 w-5" />,
+      benefits: ["Debug faster", "Track errors", "Monitor performance"]
+    }
+  ];
+
+  const projectStats = [
+    { label: "TypeScript Files", value: "100+", icon: <FileCode className="h-5 w-5" /> },
+    { label: "API Endpoints", value: "15+", icon: <Server className="h-5 w-5" /> },
+    { label: "Database Models", value: "8", icon: <Database className="h-5 w-5" /> },
+    { label: "UI Components", value: "50+", icon: <Box className="h-5 w-5" /> },
+    { label: "Type Safety", value: "100%", icon: <Shield className="h-5 w-5" /> },
+    { label: "Test Coverage", value: "Coming", icon: <CheckCircle className="h-5 w-5" /> }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -594,15 +532,41 @@ export default function WebDevelopmentPage() {
                 {/* Technologies in Category */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {category.technologies.map((tech, techIdx) => (
-                    <TechCard
+                    <div
                       key={techIdx}
-                      tech={tech}
-                      catIdx={catIdx}
-                      techIdx={techIdx}
-                      isActive={activeSection === `${catIdx}-${techIdx}`}
+                      className="group bg-gradient-to-br from-dark-blue to-dark-blue-light border-2 border-white/10 rounded-xl p-6 shadow-xl hover:shadow-white/20 hover:scale-[1.02] transition-all duration-300 hover:border-white/30"
                       onMouseEnter={() => setActiveSection(`${catIdx}-${techIdx}`)}
                       onMouseLeave={() => setActiveSection(null)}
-                    />
+                    >
+                      {/* Tech Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h4 className="text-xl font-bold text-carolina mb-1">{tech.name}</h4>
+                          <span className="text-xs text-accent-400 font-mono">{tech.version}</span>
+                        </div>
+                        <Package className={`h-5 w-5 text-accent-300 transition-transform duration-300 ${
+                          activeSection === `${catIdx}-${techIdx}` ? 'rotate-12 scale-110' : ''
+                        }`} />
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                        {tech.description}
+                      </p>
+
+                      {/* Features */}
+                      <div className="space-y-2">
+                        <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                          Key Features:
+                        </div>
+                        {tech.features.map((feature, idx) => (
+                          <div key={idx} className="flex items-start gap-2">
+                            <CheckCircle className="h-3.5 w-3.5 text-accent-400 flex-shrink-0 mt-0.5" />
+                            <span className="text-xs text-gray-300 leading-relaxed">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>

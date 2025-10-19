@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { logError } from "@/lib/logger";
+import { put, del } from "@vercel/blob";
 
 /**
  * Admin API for Image Upload Management
@@ -11,16 +12,18 @@ import { logError } from "@/lib/logger";
  * Security:
  * - Protected by middleware (ADMIN role required)
  * - File type validation
- * - File size limits
+ * - File size limits (10MB max)
  * - Metadata storage in database
  *
- * Note: This implementation stores image metadata.
- * For actual file uploads, integrate with:
- * - Vercel Blob Storage (@vercel/blob)
- * - AWS S3
- * - Cloudinary
- * - Or local public directory
+ * Storage: Vercel Blob Storage
  */
+
+// Constants
+// Note: Vercel server uploads are limited to 4.5MB
+// For larger files, use client-side upload (presigned URLs)
+const MAX_FILE_SIZE = 4.5 * 1024 * 1024; // 4.5MB (Vercel limit for server uploads)
+const ALLOWED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"];
+const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
 
 // Validation schema for image metadata
 const imageMetadataSchema = z.object({
@@ -37,17 +40,14 @@ const imageMetadataSchema = z.object({
 
 /**
  * POST /api/admin/upload
- * Upload image and store metadata
+ * Upload image file to Vercel Blob and store metadata in database
  *
- * This endpoint accepts image metadata after the file has been uploaded
- * to your storage solution (Vercel Blob, S3, etc.)
- *
- * For direct file upload, you would:
- * 1. Accept FormData with file
- * 2. Validate file type and size
- * 3. Upload to storage provider
- * 4. Get URL from provider
- * 5. Store metadata in database
+ * Accepts FormData with:
+ * - file: The image file
+ * - alt: Alt text for accessibility (optional, defaults to filename)
+ * - caption: Image caption (optional)
+ * - projectId: Associated project ID (optional)
+ * - blogId: Associated blog ID (optional)
  */
 export async function POST(request: NextRequest) {
   try {
@@ -60,19 +60,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    // Parse FormData
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-    // Validate input
-    const validation = imageMetadataSchema.safeParse(body);
-
-    if (!validation.success) {
+    if (!file) {
       return NextResponse.json(
-        { error: "Validation failed", details: validation.error.issues },
+        { error: "No file provided" },
         { status: 400 }
       );
     }
 
-    const data = validation.data;
+    // Validate file type
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        {
+          error: "Invalid file type",
+          details: `Allowed types: ${ALLOWED_EXTENSIONS.join(", ")}`
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        {
+          error: "File too large",
+          details: `Maximum file size is 4.5MB (Vercel server upload limit)`
+        },
+        { status: 400 }
+      );
+    }
+
+    // Upload to Vercel Blob
+    const blob = await put(file.name, file, {
+      access: "public",
+      addRandomSuffix: true,
+    });
+
+    // Get optional metadata from form
+    const alt = (formData.get("alt") as string) || file.name;
+    const caption = (formData.get("caption") as string) || null;
+    const projectId = (formData.get("projectId") as string) || undefined;
+    const blogId = (formData.get("blogId") as string) || undefined;
+
+    // Get file extension for format
+    const format = file.name.split(".").pop()?.toLowerCase() || null;
 
     // Prepare data for database
     const imageData: {
@@ -82,29 +116,29 @@ export async function POST(request: NextRequest) {
       width: number | null;
       height: number | null;
       format: string | null;
-      size: number | null;
+      size: number;
       projectId?: string;
       blogId?: string;
     } = {
-      url: data.url,
-      alt: data.alt,
-      caption: data.caption || null,
-      width: data.width || null,
-      height: data.height || null,
-      format: data.format || null,
-      size: data.size || null,
+      url: blob.url,
+      alt,
+      caption,
+      width: null, // Could be extracted from image metadata if needed
+      height: null, // Could be extracted from image metadata if needed
+      format,
+      size: file.size,
     };
 
     // Connect to project or blog if provided
-    if (data.projectId && data.projectId !== "") {
-      imageData.projectId = data.projectId;
+    if (projectId && projectId !== "") {
+      imageData.projectId = projectId;
     }
 
-    if (data.blogId && data.blogId !== "") {
-      imageData.blogId = data.blogId;
+    if (blogId && blogId !== "") {
+      imageData.blogId = blogId;
     }
 
-    // Create image record
+    // Create image record in database
     const image = await prisma.image.create({
       data: imageData,
     });
@@ -113,6 +147,11 @@ export async function POST(request: NextRequest) {
       {
         message: "Image uploaded successfully",
         image,
+        blob: {
+          url: blob.url,
+          pathname: blob.pathname,
+          contentType: blob.contentType,
+        },
       },
       { status: 201 }
     );
@@ -300,10 +339,7 @@ export async function PUT(request: NextRequest) {
 
 /**
  * DELETE /api/admin/upload
- * Delete an image
- *
- * Note: This only deletes the database record.
- * You should also delete the file from your storage provider.
+ * Delete an image from Vercel Blob storage and database
  */
 export async function DELETE(request: NextRequest) {
   try {
@@ -338,10 +374,14 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // TODO: Delete file from storage provider (Vercel Blob, S3, etc.)
-    // Example for Vercel Blob:
-    // import { del } from '@vercel/blob';
-    // await del(existingImage.url);
+    // Delete file from Vercel Blob storage
+    try {
+      await del(existingImage.url);
+    } catch (blobError) {
+      // Log the error but continue with database deletion
+      // The file might already be deleted or the URL might be invalid
+      logError("Failed to delete file from Blob storage", blobError);
+    }
 
     // Delete image record from database
     await prisma.image.delete({

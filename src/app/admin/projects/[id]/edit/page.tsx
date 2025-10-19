@@ -3,12 +3,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { use } from "react";
-import { TagSelector, type Tag } from "@/components/admin/TagSelector";
+import type { Tag } from "@/components/admin/TagSelector";
 import { logError } from "@/lib/logger";
+import { generateSlug } from "@/lib/utils";
+
+// Lazy load TagSelector for better bundle size
+const TagSelector = dynamic(
+  () => import("@/components/admin/TagSelector").then(mod => ({ default: mod.TagSelector })),
+  { loading: () => <div className="w-full h-10 bg-gray-100 rounded-lg animate-pulse" /> }
+);
 
 interface Project {
   id: string;
@@ -94,14 +102,6 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
 
     fetchProject();
   }, [resolvedParams.id]);
-
-  // Auto-generate slug from title
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "");
-  };
 
   const handleTitleChange = (title: string) => {
     setFormData({

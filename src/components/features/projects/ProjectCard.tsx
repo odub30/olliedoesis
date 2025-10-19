@@ -1,4 +1,5 @@
 // src/components/features/projects/ProjectCard.tsx
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink, Github, Calendar, Star, GitFork, Eye } from 'lucide-react';
@@ -10,7 +11,7 @@ interface ProjectCardProps {
   className?: string;
 }
 
-export function ProjectCard({ project, featured = false, className = '' }: ProjectCardProps) {
+export const ProjectCard = React.memo(function ProjectCard({ project, featured = false, className = '' }: ProjectCardProps) {
   const cardClasses = featured
     ? 'lg:col-span-2 lg:row-span-2'
     : 'col-span-1';
@@ -180,4 +181,4 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
       </div>
     </div>
   );
-}
+});

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { FolderKanban, FileText, ImageIcon, Tag, Calendar, Eye, Clock } from "lucide-react";
 
 // Simple date formatter
@@ -112,7 +112,8 @@ export default function SearchCard({
   const displayDate = publishedAt || createdAt;
 
   return (
-    <motion.div
+    <LazyMotion features={domAnimation}>
+      <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
@@ -219,6 +220,7 @@ export default function SearchCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+      </m.div>
+    </LazyMotion>
   );
 }

@@ -59,7 +59,7 @@ export default function LighthouseBlogPage() {
             <MetricsOverview />
             <ImageOptimization />
             <JavaScriptOptimization />
-            <CoreWebVitals />
+            <CoreWebVitals id="core-web-vitals" />
             <OptimizationComparison />
             <PerformanceBudgets />
             <FAQSection />

@@ -237,7 +237,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
   // Get related blogs
   const relatedBlogs = await getRelatedBlogs(
     blog.id,
-    blog.relatedPostIds || [],
+    [],
     blog.tags.map((tag) => tag.slug)
   );
 

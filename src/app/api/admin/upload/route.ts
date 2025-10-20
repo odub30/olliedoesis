@@ -5,14 +5,16 @@ import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { logError } from "@/lib/logger";
 import { put, del } from "@vercel/blob";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 /**
  * Admin API for Image Upload Management
  *
  * Security:
  * - Protected by middleware (ADMIN role required)
+ * - Rate limited to prevent abuse (60 requests/minute)
  * - File type validation
- * - File size limits (10MB max)
+ * - File size limits (4.5MB max)
  * - Metadata storage in database
  *
  * Storage: Vercel Blob Storage
@@ -50,6 +52,12 @@ const imageMetadataSchema = z.object({
  * - blogId: Associated blog ID (optional)
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting for file uploads
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.api);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 
@@ -169,6 +177,12 @@ export async function POST(request: NextRequest) {
  * List all images
  */
 export async function GET(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.api);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 
@@ -255,6 +269,12 @@ export async function GET(request: NextRequest) {
  * Update image metadata (alt text, caption, tags)
  */
 export async function PUT(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.api);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 
@@ -333,6 +353,12 @@ export async function PUT(request: NextRequest) {
  * Delete an image from Vercel Blob storage and database
  */
 export async function DELETE(request: NextRequest) {
+  // Apply stricter rate limiting for deletions
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.strict);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 

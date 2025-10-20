@@ -3,10 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import crypto from "crypto";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { logError } from "@/lib/logger";
 
 /**
  * Request Password Reset API Endpoint
  * Creates a verification token and sends reset email
+ *
+ * Security:
+ * - Rate limited to prevent abuse (5 attempts per 15 minutes)
+ * - No email enumeration (always returns success message)
+ * - Tokens expire after 1 hour
  */
 
 // Validation schema
@@ -15,6 +22,12 @@ const requestResetSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting to prevent abuse
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.auth);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const body = await request.json();
 
@@ -94,8 +107,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log error for debugging
-    console.error("Request password reset error:", error);
+    // Log error with our logger
+    logError("Request password reset error", error);
 
     return NextResponse.json(
       { error: "Failed to process request. Please try again." },

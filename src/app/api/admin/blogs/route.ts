@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { logError } from "@/lib/logger";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 /**
  * Admin API for Blog Management
  *
  * Security:
  * - Protected by middleware (ADMIN role required)
+ * - Rate limited (60 requests/minute)
  * - Input validation with Zod
  * - Automatic reading time calculation
  */
@@ -39,6 +41,12 @@ function calculateReadingTime(content: string): number {
  * List all blogs (admin view with drafts)
  */
 export async function GET(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.api);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 
@@ -117,6 +125,12 @@ export async function GET(request: NextRequest) {
  * Create a new blog post
  */
 export async function POST(request: NextRequest) {
+  // Apply rate limiting
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.api);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const session = await auth();
 

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
 import { logError } from "@/lib/logger";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 // Validation schema for blog updates
 const blogUpdateSchema = z.object({

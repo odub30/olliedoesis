@@ -3,10 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as bcrypt from "bcryptjs";
 import { z } from "zod";
+import { rateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { logError } from "@/lib/logger";
 
 /**
  * Sign Up API Endpoint
  * Creates a new user account with email and password
+ *
+ * Security:
+ * - Rate limited to prevent brute force attacks
+ * - Password requirements enforced
+ * - Secure password hashing with bcrypt
  */
 
 // Validation schema for sign-up
@@ -23,6 +30,12 @@ const signUpSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting (5 attempts per 15 minutes)
+  const rateLimitResponse = rateLimit(request, RATE_LIMITS.auth);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   try {
     const body = await request.json();
 
@@ -91,8 +104,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log error for debugging
-    console.error("Sign up error:", error);
+    // Log error with our logger
+    logError("Sign up error", error);
 
     return NextResponse.json(
       { error: "Failed to create account. Please try again." },

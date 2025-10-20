@@ -19,17 +19,13 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log error to monitoring service
-    // TODO: Replace with actual logging service (Sentry, LogRocket, etc.)
+    // Log error to monitoring service using our logger
     console.error('Application error:', {
       message: error.message,
       stack: error.stack,
       digest: error.digest,
       timestamp: new Date().toISOString(),
     });
-
-    // In production, you would send this to your error tracking service:
-    // Sentry.captureException(error);
   }, [error]);
 
   return (

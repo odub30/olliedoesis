@@ -1,9 +1,10 @@
 // src/app/admin/projects/page.tsx
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Eye, Edit, Trash2, ExternalLink } from "lucide-react";
 
-const prisma = new PrismaClient();
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic';
 
 async function getProjects() {
   return await prisma.project.findMany({
@@ -33,6 +34,8 @@ async function getProjects() {
 export default async function AdminProjectsPage() {
   const projects = await getProjects();
 
+  type ProjectType = Awaited<ReturnType<typeof getProjects>>[number]
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -61,19 +64,19 @@ export default async function AdminProjectsPage() {
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Published</p>
           <p className="text-2xl font-bold text-green-600">
-            {projects.filter((p) => p.published).length}
+            {projects.filter((p: ProjectType) => p.published).length}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Drafts</p>
           <p className="text-2xl font-bold text-orange-600">
-            {projects.filter((p) => !p.published).length}
+            {projects.filter((p: ProjectType) => !p.published).length}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Featured</p>
           <p className="text-2xl font-bold text-blue-600">
-            {projects.filter((p) => p.featured).length}
+            {projects.filter((p: ProjectType) => p.featured).length}
           </p>
         </div>
       </div>
@@ -124,7 +127,7 @@ export default async function AdminProjectsPage() {
                   </td>
                 </tr>
               ) : (
-                projects.map((project) => (
+                projects.map((project: ProjectType) => (
                   <tr key={project.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-3">
@@ -156,7 +159,7 @@ export default async function AdminProjectsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {project.technologies.slice(0, 3).map((tech) => (
+                        {project.techStack.slice(0, 3).map((tech: string) => (
                           <span
                             key={tech}
                             className="px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded"
@@ -164,9 +167,9 @@ export default async function AdminProjectsPage() {
                             {tech}
                           </span>
                         ))}
-                        {project.technologies.length > 3 && (
+                        {project.techStack.length > 3 && (
                           <span className="px-2 py-0.5 text-xs text-muted-foreground">
-                            +{project.technologies.length - 3}
+                            +{project.techStack.length - 3}
                           </span>
                         )}
                       </div>
@@ -178,7 +181,7 @@ export default async function AdminProjectsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                      {new Date(project.updatedAt).toLocaleDateString()}
+                      {project.updatedAt ? new Date(project.updatedAt).toLocaleDateString() : '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                       <div className="flex items-center justify-end gap-2">

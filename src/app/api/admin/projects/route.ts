@@ -1,10 +1,9 @@
 // src/app/api/admin/projects/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 /**
  * Admin API for Project Management
@@ -21,12 +20,13 @@ const projectSchema = z.object({
   slug: z.string().min(1, "Slug is required").max(200).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
   description: z.string().min(1, "Description is required"),
   content: z.string().min(1, "Content is required"),
-  technologies: z.array(z.string()).default([]),
-  liveUrl: z.string().url().optional().or(z.literal("")),
+  techStack: z.array(z.string()).default([]),
+  demoUrl: z.string().url().optional().or(z.literal("")),
   githubUrl: z.string().url().optional().or(z.literal("")),
   featured: z.boolean().default(false),
   published: z.boolean().default(false),
   order: z.number().int().default(0),
+  tagIds: z.array(z.string()).optional().default([]),
 });
 
 /**
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (published === "true") where.published = true;
     if (published === "false") where.published = false;
@@ -60,8 +60,8 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
+        { title: { contains: search, mode: "insensitive" as const } },
+        { description: { contains: search, mode: "insensitive" as const } },
       ];
     }
 
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
       total: projects.length,
     });
   } catch (error) {
-    console.error("Error fetching projects:", error);
+    logError("Failed to fetch projects in admin API", error);
     return NextResponse.json(
       { error: "Failed to fetch projects" },
       { status: 500 }
@@ -151,10 +151,20 @@ export async function POST(request: NextRequest) {
     // Create project
     const project = await prisma.project.create({
       data: {
-        ...data,
-        liveUrl: data.liveUrl || null,
+        title: data.title,
+        slug: data.slug,
+        description: data.description,
+        content: data.content,
+        techStack: data.techStack,
+        demoUrl: data.demoUrl || null,
         githubUrl: data.githubUrl || null,
+        featured: data.featured,
+        published: data.published,
+        order: data.order,
         authorId: session.user.id,
+        tags: {
+          connect: data.tagIds.map((id) => ({ id })),
+        },
       },
       include: {
         author: {
@@ -176,7 +186,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating project:", error);
+    logError("Failed to create project in admin API", error);
     return NextResponse.json(
       { error: "Failed to create project" },
       { status: 500 }

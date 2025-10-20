@@ -1,12 +1,12 @@
 // src/lib/auth.ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import NextAuth, { NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
-
-const prisma = new PrismaClient();
+import Credentials from "next-auth/providers/credentials";
+import * as bcrypt from "bcryptjs";
 
 /**
  * NextAuth.js v5 Configuration
@@ -22,10 +22,54 @@ const prisma = new PrismaClient();
 
 export const authConfig: NextAuthConfig = {
   // Prisma adapter connects auth to our database
+  // Use 'as any' to work around next-auth v5 beta type incompatibilities
   adapter: PrismaAdapter(prisma) as any,
 
-  // Providers: GitHub OAuth and Email magic links
+  // Providers: Credentials, GitHub OAuth, Email magic links, and Google OAuth
   providers: [
+    // Email/Password authentication with Credentials provider
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
+        }
+
+        // Find user by email
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email as string },
+        });
+
+        // Check if user exists and has a password (not OAuth-only)
+        if (!user || !user.password) {
+          throw new Error("Invalid email or password");
+        }
+
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid email or password");
+        }
+
+        // Return user object (password excluded)
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          role: user.role,
+        };
+      },
+    }),
+
     GitHub({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
@@ -40,13 +84,17 @@ export const authConfig: NextAuthConfig = {
       },
     }),
 
-    // Email magic link authentication using Resend
-    Resend({
-      apiKey: process.env.RESEND_API_KEY!,
-      from: process.env.EMAIL_FROM!,
-    }),
+    // Email magic link authentication using Resend (optional)
+    ...(process.env.RESEND_API_KEY && process.env.EMAIL_FROM
+      ? [
+          Resend({
+            apiKey: process.env.RESEND_API_KEY,
+            from: process.env.EMAIL_FROM,
+          }),
+        ]
+      : []),
 
-    // Google OAuth
+    // Google OAuth (optional)
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
           Google({
@@ -64,6 +112,9 @@ export const authConfig: NextAuthConfig = {
     verifyRequest: "/auth/verify-request",
   },
 
+  // Trust host for cookies
+  trustHost: true,
+
   // Session strategy: JWT for stateless authentication
   session: {
     strategy: "jwt",
@@ -73,6 +124,59 @@ export const authConfig: NextAuthConfig = {
   // Callbacks for custom logic
   callbacks: {
     /**
+     * Authorized Callback - Handles ALL middleware authorization
+     * This is the ONLY place authorization logic runs in NextAuth v5
+     */
+    authorized({ auth, request }) {
+      const { pathname } = request.nextUrl;
+      const isLoggedIn = !!auth;
+
+      // Skip auth routes entirely to prevent redirect loops
+      if (pathname.startsWith("/auth/") || pathname.startsWith("/api/auth/")) {
+        return true;
+      }
+
+      // ===== ADMIN ROUTE PROTECTION =====
+      if (pathname.startsWith("/admin")) {
+        if (!isLoggedIn) {
+          // Return false to trigger redirect to signin
+          return false;
+        }
+
+        if (auth.user?.role !== "ADMIN") {
+          return false;
+        }
+
+        return true;
+      }
+
+      // ===== API ROUTE PROTECTION =====
+      if (pathname.startsWith("/api/") && request.method !== "GET") {
+        if (!pathname.startsWith("/api/auth/")) {
+          if (!isLoggedIn) {
+            return false;
+          }
+
+          // Admin-only API routes
+          if (
+            pathname.startsWith("/api/admin/") ||
+            pathname.startsWith("/api/projects/") ||
+            pathname.startsWith("/api/blogs/") ||
+            pathname.startsWith("/api/tags/") ||
+            pathname.startsWith("/api/upload/")
+          ) {
+            if (auth.user?.role !== "ADMIN") {
+              return false;
+            }
+          }
+        }
+      }
+
+      // Allow all other requests
+      return true;
+    },
+
+    /**
      * JWT Callback - Runs when JWT is created or updated
      * Adds user role and ID to the token
      */
@@ -80,11 +184,18 @@ export const authConfig: NextAuthConfig = {
       // On sign in, add user data to token
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+
+        // Fetch the actual role from database instead of using provider default
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { role: true },
+        });
+
+        token.role = dbUser?.role || "PUBLIC";
       }
 
       // Check if this is the first user - make them ADMIN
-      if (trigger === "signIn") {
+      if (trigger === "signIn" && user) {
         const userCount = await prisma.user.count();
 
         if (userCount === 1) {
@@ -116,37 +227,18 @@ export const authConfig: NextAuthConfig = {
      * Sign In Callback - Controls who can sign in
      * Add custom logic here if needed (e.g., allowlist)
      */
-    async signIn({ user, account, profile }) {
+    async signIn() {
       // Allow all sign-ins by default
       // Add custom logic here if you want to restrict access
       return true;
     },
   },
 
-  // Events for logging and analytics
-  events: {
-    async signIn({ user }) {
-      console.log(`✅ User signed in: ${user.email}`);
-    },
-    async signOut() {
-      console.log(`👋 User signed out`);
-    },
-  },
-
   // Security settings
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
+  // Remove custom cookie config - let NextAuth use defaults
+  // The __Secure- prefix requires secure: true, which conflicts with development
 
-  // Debug mode (disabled)
+  // Debug mode (disabled for production)
   debug: false,
 };
 

@@ -1,4 +1,5 @@
 // src/components/features/projects/ProjectCard.tsx
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink, Github, Calendar, Star, GitFork, Eye } from 'lucide-react';
@@ -10,7 +11,7 @@ interface ProjectCardProps {
   className?: string;
 }
 
-export function ProjectCard({ project, featured = false, className = '' }: ProjectCardProps) {
+export const ProjectCard = React.memo(function ProjectCard({ project, featured = false, className = '' }: ProjectCardProps) {
   const cardClasses = featured
     ? 'lg:col-span-2 lg:row-span-2'
     : 'col-span-1';
@@ -23,6 +24,7 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
           src={project.image || '/images/projects/placeholder.png'}
           alt={`${project.title} screenshot`}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover transition-all duration-500 group-hover:scale-110"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -107,7 +109,7 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
         {/* Tech Stack */}
         <div className="mb-6">
           <div className="flex flex-wrap gap-2">
-            {project.tech.slice(0, featured ? 6 : 4).map((tech, index) => (
+            {project.tech.slice(0, featured ? 6 : 4).map((tech) => (
               <span
                 key={tech}
                 className="px-3 py-1 text-xs font-medium rounded-full bg-carolina/20 text-carolina border border-carolina/30 hover:bg-carolina/30 transition-all duration-200 hover:scale-105"
@@ -179,4 +181,4 @@ export function ProjectCard({ project, featured = false, className = '' }: Proje
       </div>
     </div>
   );
-}
+});

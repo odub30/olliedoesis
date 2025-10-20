@@ -77,6 +77,7 @@ export function Hero() {
                 src="/images/avatars/avatar.webp"
                 alt="Ollie Does Is"
                 fill
+                sizes="128px"
                 className="object-cover"
                 priority
                 onError={(e) => {

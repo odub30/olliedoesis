@@ -12,8 +12,6 @@ import {
   Key,
   ArrowLeft,
   ArrowRight,
-  CheckCircle,
-  Sparkles,
   FileSearch,
   Network,
   Bug,
@@ -22,98 +20,104 @@ import {
   Award
 } from 'lucide-react';
 
+
+// =============================================
+// STATIC DATA (moved outside component for performance)
+// =============================================
+
+const services = [
+  {
+    icon: <Shield className="h-8 w-8" />,
+    title: "Security Assessment",
+    description: "Comprehensive security audits to identify vulnerabilities and strengthen your defenses.",
+    features: ["Vulnerability Scanning", "Risk Analysis", "Security Reports"]
+  },
+  {
+    icon: <Bug className="h-8 w-8" />,
+    title: "Penetration Testing",
+    description: "Ethical hacking to discover and fix security weaknesses before attackers do.",
+    features: ["Web App Testing", "Network Testing", "API Security"]
+  },
+  {
+    icon: <Network className="h-8 w-8" />,
+    title: "Network Security",
+    description: "Protecting your network infrastructure from unauthorized access and threats.",
+    features: ["Firewall Configuration", "IDS/IPS Setup", "Network Monitoring"]
+  },
+  {
+    icon: <Lock className="h-8 w-8" />,
+    title: "Application Security",
+    description: "Securing web and mobile applications against common vulnerabilities and exploits.",
+    features: ["OWASP Top 10", "Secure Coding", "Code Review"]
+  },
+  {
+    icon: <Eye className="h-8 w-8" />,
+    title: "Security Monitoring",
+    description: "24/7 monitoring and incident response to detect and mitigate security threats.",
+    features: ["SIEM Integration", "Threat Detection", "Incident Response"]
+  },
+  {
+    icon: <FileSearch className="h-8 w-8" />,
+    title: "Digital Forensics",
+    description: "Investigating security incidents and recovering critical digital evidence.",
+    features: ["Incident Analysis", "Evidence Collection", "Forensic Reports"]
+  }
+];
+
+const expertise = [
+  { name: "Network Security", icon: <Network className="h-5 w-5" />, color: "accent" },
+  { name: "Web Security", icon: <Shield className="h-5 w-5" />, color: "primary" },
+  { name: "Penetration Testing", icon: <Bug className="h-5 w-5" />, color: "accent" },
+  { name: "Cryptography", icon: <Key className="h-5 w-5" />, color: "primary" },
+  { name: "Secure Coding", icon: <Lock className="h-5 w-5" />, color: "accent" },
+  { name: "Risk Assessment", icon: <AlertTriangle className="h-5 w-5" />, color: "primary" },
+  { name: "SIEM Tools", icon: <Eye className="h-5 w-5" />, color: "accent" },
+  { name: "Digital Forensics", icon: <FileSearch className="h-5 w-5" />, color: "primary" },
+  { name: "Compliance", icon: <ShieldCheck className="h-5 w-5" />, color: "accent" },
+  { name: "Threat Modeling", icon: <Server className="h-5 w-5" />, color: "primary" },
+  { name: "Authentication", icon: <Fingerprint className="h-5 w-5" />, color: "accent" },
+  { name: "Security Training", icon: <Award className="h-5 w-5" />, color: "primary" },
+];
+
+const certifications = [
+  {
+    name: "CompTIA Security+",
+    status: "In Progress",
+    description: "Industry-standard certification for IT security professionals",
+    color: "accent"
+  },
+  {
+    name: "Ethical Hacking",
+    status: "Studying",
+    description: "Learning penetration testing methodologies and tools",
+    color: "primary"
+  },
+  {
+    name: "Network Security",
+    status: "Studying",
+    description: "Advanced network security concepts and practices",
+    color: "accent"
+  }
+];
+
+const securityPrinciples = [
+  "Defense in depth",
+  "Least privilege access",
+  "Zero trust architecture",
+  "Regular security audits",
+  "Incident response planning",
+  "Security awareness training",
+  "Encryption at rest & in transit",
+  "Continuous monitoring"
+];
+
+
 export default function CybersecurityPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  const services = [
-    {
-      icon: <Shield className="h-8 w-8" />,
-      title: "Security Assessment",
-      description: "Comprehensive security audits to identify vulnerabilities and strengthen your defenses.",
-      features: ["Vulnerability Scanning", "Risk Analysis", "Security Reports"]
-    },
-    {
-      icon: <Bug className="h-8 w-8" />,
-      title: "Penetration Testing",
-      description: "Ethical hacking to discover and fix security weaknesses before attackers do.",
-      features: ["Web App Testing", "Network Testing", "API Security"]
-    },
-    {
-      icon: <Network className="h-8 w-8" />,
-      title: "Network Security",
-      description: "Protecting your network infrastructure from unauthorized access and threats.",
-      features: ["Firewall Configuration", "IDS/IPS Setup", "Network Monitoring"]
-    },
-    {
-      icon: <Lock className="h-8 w-8" />,
-      title: "Application Security",
-      description: "Securing web and mobile applications against common vulnerabilities and exploits.",
-      features: ["OWASP Top 10", "Secure Coding", "Code Review"]
-    },
-    {
-      icon: <Eye className="h-8 w-8" />,
-      title: "Security Monitoring",
-      description: "24/7 monitoring and incident response to detect and mitigate security threats.",
-      features: ["SIEM Integration", "Threat Detection", "Incident Response"]
-    },
-    {
-      icon: <FileSearch className="h-8 w-8" />,
-      title: "Digital Forensics",
-      description: "Investigating security incidents and recovering critical digital evidence.",
-      features: ["Incident Analysis", "Evidence Collection", "Forensic Reports"]
-    }
-  ];
-
-  const expertise = [
-    { name: "Network Security", icon: <Network className="h-5 w-5" />, color: "accent" },
-    { name: "Web Security", icon: <Shield className="h-5 w-5" />, color: "primary" },
-    { name: "Penetration Testing", icon: <Bug className="h-5 w-5" />, color: "accent" },
-    { name: "Cryptography", icon: <Key className="h-5 w-5" />, color: "primary" },
-    { name: "Secure Coding", icon: <Lock className="h-5 w-5" />, color: "accent" },
-    { name: "Risk Assessment", icon: <AlertTriangle className="h-5 w-5" />, color: "primary" },
-    { name: "SIEM Tools", icon: <Eye className="h-5 w-5" />, color: "accent" },
-    { name: "Digital Forensics", icon: <FileSearch className="h-5 w-5" />, color: "primary" },
-    { name: "Compliance", icon: <ShieldCheck className="h-5 w-5" />, color: "accent" },
-    { name: "Threat Modeling", icon: <Server className="h-5 w-5" />, color: "primary" },
-    { name: "Authentication", icon: <Fingerprint className="h-5 w-5" />, color: "accent" },
-    { name: "Security Training", icon: <Award className="h-5 w-5" />, color: "primary" },
-  ];
-
-  const certifications = [
-    {
-      name: "CompTIA Security+",
-      status: "In Progress",
-      description: "Industry-standard certification for IT security professionals",
-      color: "accent"
-    },
-    {
-      name: "Ethical Hacking",
-      status: "Studying",
-      description: "Learning penetration testing methodologies and tools",
-      color: "primary"
-    },
-    {
-      name: "Network Security",
-      status: "Studying",
-      description: "Advanced network security concepts and practices",
-      color: "accent"
-    }
-  ];
-
-  const securityPrinciples = [
-    "Defense in depth",
-    "Least privilege access",
-    "Zero trust architecture",
-    "Regular security audits",
-    "Incident response planning",
-    "Security awareness training",
-    "Encryption at rest & in transit",
-    "Continuous monitoring"
-  ];
 
   return (
     <div className="min-h-screen bg-background">

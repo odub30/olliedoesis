@@ -243,6 +243,23 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Blog CTA Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">Check Out My Blog</h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Read my latest thoughts on web development, cybersecurity, and technology
+          </p>
+          <Link
+            href="/blogs"
+            className="btn btn-primary px-6 py-3 group"
+          >
+            <span>View All Posts</span>
+            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="relative py-20 overflow-hidden">
         {/* Background */}

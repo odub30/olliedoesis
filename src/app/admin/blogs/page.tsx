@@ -1,9 +1,10 @@
 // src/app/admin/blogs/page.tsx
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Eye, Edit, Trash2, ExternalLink, Clock } from "lucide-react";
 
-const prisma = new PrismaClient();
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic';
 
 async function getBlogs() {
   return await prisma.blog.findMany({
@@ -33,6 +34,8 @@ async function getBlogs() {
 export default async function AdminBlogsPage() {
   const blogs = await getBlogs();
 
+  type BlogType = Awaited<ReturnType<typeof getBlogs>>[number]
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -61,19 +64,19 @@ export default async function AdminBlogsPage() {
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Published</p>
           <p className="text-2xl font-bold text-green-600">
-            {blogs.filter((b) => b.published).length}
+            {blogs.filter((b: BlogType) => b.published).length}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Drafts</p>
           <p className="text-2xl font-bold text-orange-600">
-            {blogs.filter((b) => !b.published).length}
+            {blogs.filter((b: BlogType) => !b.published).length}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-muted-foreground">Total Views</p>
           <p className="text-2xl font-bold text-blue-600">
-            {blogs.reduce((acc, b) => acc + b.views, 0)}
+            {blogs.reduce((acc: number, b: BlogType) => acc + b.views, 0)}
           </p>
         </div>
       </div>
@@ -124,7 +127,7 @@ export default async function AdminBlogsPage() {
                   </td>
                 </tr>
               ) : (
-                blogs.map((blog) => (
+                blogs.map((blog: BlogType) => (
                   <tr key={blog.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-start gap-3">
@@ -164,7 +167,7 @@ export default async function AdminBlogsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1">
-                        {blog.tags.slice(0, 2).map((tag) => (
+                        {blog.tags.slice(0, 2).map((tag: { id: string; name: string }) => (
                           <span
                             key={tag.id}
                             className="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded"

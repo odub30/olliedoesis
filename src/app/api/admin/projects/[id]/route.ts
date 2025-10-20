@@ -1,10 +1,9 @@
 // src/app/api/admin/projects/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 // Validation schema for project updates
 const projectUpdateSchema = z.object({
@@ -18,6 +17,7 @@ const projectUpdateSchema = z.object({
   featured: z.boolean().optional(),
   published: z.boolean().optional(),
   order: z.number().int().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 /**
@@ -78,7 +78,7 @@ export async function GET(
 
     return NextResponse.json({ project });
   } catch (error) {
-    console.error("Error fetching project:", error);
+    logError("Failed to fetch project by ID in admin API", error);
     return NextResponse.json(
       { error: "Failed to fetch project" },
       { status: 500 }
@@ -147,14 +147,27 @@ export async function PUT(
     }
 
     // Convert empty strings to null for URL fields
-    const updateData: any = { ...data };
+    const updateData: Record<string, unknown> = { ...data };
     if (updateData.liveUrl === "") updateData.liveUrl = null;
     if (updateData.githubUrl === "") updateData.githubUrl = null;
+
+    // Remove tagIds from updateData as we'll handle it separately
+    delete updateData.tagIds;
+
+    // Build tag update if tagIds provided
+    const tagUpdate = data.tagIds
+      ? {
+          set: data.tagIds.map((id) => ({ id })),
+        }
+      : undefined;
 
     // Update project
     const project = await prisma.project.update({
       where: { id },
-      data: updateData,
+      data: {
+        ...updateData,
+        ...(tagUpdate && { tags: tagUpdate }),
+      },
       include: {
         author: {
           select: {
@@ -173,7 +186,7 @@ export async function PUT(
       project,
     });
   } catch (error) {
-    console.error("Error updating project:", error);
+    logError("Failed to update project in admin API", error);
     return NextResponse.json(
       { error: "Failed to update project" },
       { status: 500 }
@@ -222,7 +235,7 @@ export async function DELETE(
       message: "Project deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting project:", error);
+    logError("Failed to delete project in admin API", error);
     return NextResponse.json(
       { error: "Failed to delete project" },
       { status: 500 }

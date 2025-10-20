@@ -16,7 +16,7 @@ export default function AuthErrorPage() {
     },
     AccessDenied: {
       title: "Access Denied",
-      description: "You don't have permission to access this resource.",
+      description: "You don\u2019t have permission to access this resource.",
     },
     Verification: {
       title: "Verification Failed",

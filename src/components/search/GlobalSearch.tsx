@@ -3,8 +3,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Clock, TrendingUp, X, Loader2, FileText, FolderKanban, Image as ImageIcon, Tag } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, Clock, X, Loader2, FileText, FolderKanban, Image as ImageIcon, Tag } from "lucide-react";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
+import { logError } from "@/lib/logger";
 
 interface SearchResult {
   id: string;
@@ -44,7 +45,7 @@ export default function GlobalSearch() {
       try {
         setRecentSearches(JSON.parse(saved));
       } catch (e) {
-        console.error("Failed to parse recent searches:", e);
+        logError("Failed to parse recent searches", e);
       }
     }
   }, []);
@@ -104,7 +105,7 @@ export default function GlobalSearch() {
       const data = await response.json();
       setResults(data.results || { projects: [], blogs: [], images: [], tags: [] });
     } catch (error) {
-      console.error("Search error:", error);
+      logError("Search error", error);
       setResults({ projects: [], blogs: [], images: [], tags: [] });
     } finally {
       setIsLoading(false);
@@ -181,7 +182,7 @@ export default function GlobalSearch() {
   };
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
@@ -201,7 +202,7 @@ export default function GlobalSearch() {
         {isOpen && (
           <>
             {/* Backdrop */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -210,7 +211,7 @@ export default function GlobalSearch() {
             />
 
             {/* Modal */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
@@ -346,10 +347,10 @@ export default function GlobalSearch() {
                   </div>
                 )}
               </div>
-            </motion.div>
+            </m.div>
           </>
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
 }

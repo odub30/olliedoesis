@@ -1,10 +1,9 @@
 // src/app/api/admin/tags/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 /**
  * Admin API for Tag Management
@@ -47,12 +46,12 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { slug: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" as const } },
+        { slug: { contains: search, mode: "insensitive" as const } },
       ];
     }
 
@@ -63,18 +62,16 @@ export async function GET(request: NextRequest) {
           select: {
             projects: true,
             blogs: true,
-            images: true,
           },
         },
       },
       orderBy: [
-        { count: "desc" },
         { name: "asc" },
       ],
     });
 
     // Calculate total usage count for each tag
-    const tagsWithUsage = tags.map(tag => ({
+    const tagsWithUsage = tags.map((tag: any) => ({
       ...tag,
       totalUsage: tag._count.projects + tag._count.blogs + tag._count.images,
     }));
@@ -84,7 +81,7 @@ export async function GET(request: NextRequest) {
       total: tags.length,
     });
   } catch (error) {
-    console.error("Error fetching tags:", error);
+    logError("Failed to fetch tags in admin API", error);
     return NextResponse.json(
       { error: "Failed to fetch tags" },
       { status: 500 }
@@ -143,7 +140,6 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         slug: data.slug,
-        count: 0,
       },
     });
 
@@ -155,7 +151,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating tag:", error);
+    logError("Failed to create tag in admin API", error);
     return NextResponse.json(
       { error: "Failed to create tag" },
       { status: 500 }
@@ -214,10 +210,10 @@ export async function PUT(request: NextRequest) {
 
     // Check for conflicts if name or slug is being updated
     if (data.name || data.slug) {
-      const orConditions: any[] = [];
+      const orConditions: Array<Record<string, unknown>> = [];
 
       if (data.name) {
-        orConditions.push({ name: { equals: data.name, mode: "insensitive" } });
+        orConditions.push({ name: { equals: data.name, mode: "insensitive" as const } });
       }
 
       if (data.slug) {
@@ -252,7 +248,7 @@ export async function PUT(request: NextRequest) {
       tag,
     });
   } catch (error) {
-    console.error("Error updating tag:", error);
+    logError("Failed to update tag in admin API", error);
     return NextResponse.json(
       { error: "Failed to update tag" },
       { status: 500 }
@@ -293,7 +289,6 @@ export async function DELETE(request: NextRequest) {
           select: {
             projects: true,
             blogs: true,
-            images: true,
           },
         },
       },
@@ -307,7 +302,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Check if tag is in use
-    const totalUsage = existingTag._count.projects + existingTag._count.blogs + existingTag._count.images;
+    const totalUsage = existingTag._count.projects + existingTag._count.blogs;
 
     if (totalUsage > 0) {
       return NextResponse.json(
@@ -328,7 +323,7 @@ export async function DELETE(request: NextRequest) {
       message: "Tag deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting tag:", error);
+    logError("Failed to delete tag in admin API", error);
     return NextResponse.json(
       { error: "Failed to delete tag" },
       { status: 500 }

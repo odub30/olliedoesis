@@ -1,8 +1,8 @@
 export const siteConfig = {
-  name: "Your Name",
-  title: "Your Name - Portfolio",
-  description: "A showcase of my web development, networking, and security projects",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  name: "Ollie Does Is",
+  title: "Ollie Does Is - Web Developer & Cybersecurity Student",
+  description: "Portfolio of Ollie Does Is - Web Developer & Cybersecurity Student showcasing web development, networking, and security projects",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://olliedoesis.dev",
   ogImage: "/images/og/default.png",
   links: {
     github: "https://github.com/your-username",

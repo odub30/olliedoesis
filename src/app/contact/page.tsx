@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logError } from "@/lib/logger";
 
 export const runtime = 'edge'; // or 'nodejs'
 export const dynamic = 'force-dynamic';
@@ -82,7 +83,7 @@ export default function ContactPage() {
         setSubmitStatus("error");
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      logError("Error submitting form", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);

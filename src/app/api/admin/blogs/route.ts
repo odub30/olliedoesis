@@ -1,10 +1,9 @@
 // src/app/api/admin/blogs/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 /**
  * Admin API for Blog Management
@@ -25,6 +24,7 @@ const blogSchema = z.object({
   featured: z.boolean().default(false),
   publishedAt: z.string().datetime().optional().or(z.literal("")),
   readTime: z.number().int().positive().optional(),
+  tagIds: z.array(z.string()).optional().default([]),
 });
 
 // Calculate reading time from content (rough estimate: 200 words per minute)
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
 
     // Build where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (published === "true") where.published = true;
     if (published === "false") where.published = false;
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { excerpt: { contains: search, mode: "insensitive" } },
+        { title: { contains: search, mode: "insensitive" as const } },
+        { excerpt: { contains: search, mode: "insensitive" as const } },
       ];
     }
 
@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
       total: blogs.length,
     });
   } catch (error) {
-    console.error("Error fetching blogs:", error);
+    logError("Failed to fetch admin blogs", error);
     return NextResponse.json(
       { error: "Failed to fetch blogs" },
       { status: 500 }
@@ -175,6 +175,9 @@ export async function POST(request: NextRequest) {
         readTime,
         publishedAt,
         authorId: session.user.id,
+        tags: {
+          connect: data.tagIds.map((id) => ({ id })),
+        },
       },
       include: {
         author: {
@@ -196,7 +199,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error creating blog:", error);
+    logError("Failed to create blog post", error);
     return NextResponse.json(
       { error: "Failed to create blog post" },
       { status: 500 }

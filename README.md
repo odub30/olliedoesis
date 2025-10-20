@@ -12,9 +12,10 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
+[![GitHub Actions CI status badge showing workflow status for olliedoesis repository. Badge displays CI with a green checkmark if passing or a red X if failing. The badge links to the continuous integration workflow page for olliedoesis on GitHub.](https://github.com/odub30/olliedoesis/actions/workflows/ci.yml/badge.svg)](https://github.com/odub30/olliedoesis/actions/workflows/ci.yml)
+Open http://localhost:3000 with your browser to see the result.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[GitHub Actions CI status badge for the olliedoesis repository. The badge displays the word CI followed by a green checkmark if the workflow is passing or a red X if failing. The badge links to the continuous integration workflow page for olliedoesis on GitHub. The badge is set within the README file, providing a visual indicator of the project's build status. Emotional tone is neutral and informative.]
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -35,3 +36,4 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # Updated
+```

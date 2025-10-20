@@ -1,5 +1,5 @@
 // src/app/admin/page.tsx
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import {
   FolderKanban,
@@ -8,10 +8,10 @@ import {
   Eye,
   TrendingUp,
   Plus,
-  Search as SearchIcon,
 } from "lucide-react";
 
-const prisma = new PrismaClient();
+// Force dynamic rendering for admin pages
+export const dynamic = 'force-dynamic';
 
 async function getDashboardStats() {
   const [
@@ -30,7 +30,7 @@ async function getDashboardStats() {
     prisma.blog.count(),
     prisma.blog.count({ where: { published: true } }),
     prisma.image.count(),
-    prisma.project.aggregate({ _sum: { views: true } }).then((res) => res._sum.views || 0),
+  prisma.project.aggregate({ _sum: { views: true } }).then((res: { _sum: { views?: number | null } }) => res._sum.views || 0),
     prisma.project.findMany({
       take: 5,
       orderBy: { updatedAt: "desc" },
@@ -213,7 +213,7 @@ export default async function AdminDashboard() {
                 No projects yet. Create your first project!
               </p>
             ) : (
-              stats.recentProjects.map((project) => (
+            stats.recentProjects.map((project) => (
                 <Link
                   key={project.id}
                   href={`/admin/projects/${project.id}`}

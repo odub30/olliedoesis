@@ -7,12 +7,14 @@
 
 import type { FAQItem } from '@/types/faq';
 import { techStackDecisionFAQs } from './tech-stack-decision-faqs';
+import { nextjs15DeepDiveFAQs } from './nextjs-15-deep-dive-faqs';
 
 /**
  * Registry mapping blog slugs to FAQ arrays
  */
 export const blogFAQRegistry: Record<string, FAQItem[]> = {
   'building-high-performance-portfolio-tech-stack': techStackDecisionFAQs,
+  'nextjs-15-deep-dive': nextjs15DeepDiveFAQs,
   // Add more blog post FAQs here as you create them
   // 'another-blog-post-slug': anotherBlogFAQs,
 };

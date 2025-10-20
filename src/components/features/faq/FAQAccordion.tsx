@@ -260,7 +260,6 @@ export function FAQAccordion({
  */
 export function FAQItem({ faq }: { faq: FAQItem }) {
   const [isOpen, setIsOpen] = useState(false);
-  const itemId = useId();
 
   return (
     <div className="faq-item-standalone my-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">

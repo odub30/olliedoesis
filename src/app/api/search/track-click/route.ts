@@ -1,9 +1,8 @@
 // src/app/api/search/track-click/route.ts - Click Tracking API
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-
-const prisma = new PrismaClient();
+import { logError } from "@/lib/logger";
 
 /**
  * Click Tracking API
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
         where: { query: sanitizedQuery },
         data: { clickCount: { increment: 1 } },
       });
-    } catch (error) {
+    } catch {
       // If the query doesn't exist in analytics yet, create it
       await prisma.searchAnalytics.upsert({
         where: { query: sanitizedQuery },
@@ -62,10 +61,9 @@ export async function POST(request: NextRequest) {
     await prisma.searchHistory.updateMany({
       where: {
         query: sanitizedQuery,
-        clickedResult: null,
       },
       data: {
-        clickedResult: clickedResult,
+        clicked: true,
       },
     });
 
@@ -91,13 +89,13 @@ export async function POST(request: NextRequest) {
         }
       } catch (error) {
         // Silently fail if the content doesn't exist
-        console.error("Failed to update view count:", error);
+        logError("Failed to update view count in track-click API", error);
       }
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Search click tracking error:", error);
+    logError("Search click tracking error occurred", error);
     return NextResponse.json(
       { error: "Failed to track click" },
       { status: 500 }

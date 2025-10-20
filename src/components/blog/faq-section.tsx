@@ -6,12 +6,12 @@ export function FAQSection() {
     {
       question: "What is the best tech stack for a portfolio website in 2025?",
       answer:
-        "There's no universal 'best' stack—it depends on your requirements. For performance-critical portfolios with SEO needs, Next.js + React + TypeScript + Tailwind is excellent. For content-heavy sites with minimal interactivity, Astro might be better. For Vue developers, Nuxt is ideal. Define your constraints first, then choose technologies that solve your specific problems.",
+        "There\u2019s no universal 'best' stack\u2014it depends on your requirements. For performance-critical portfolios with SEO needs, Next.js + React + TypeScript + Tailwind is excellent. For content-heavy sites with minimal interactivity, Astro might be better. For Vue developers, Nuxt is ideal. Define your constraints first, then choose technologies that solve your specific problems.",
     },
     {
       question: "Should I use TypeScript or JavaScript for my portfolio?",
       answer:
-        "TypeScript is highly recommended for portfolios you'll maintain long-term. The initial learning curve pays off quickly through error prevention, better IDE support, and self-documenting code. For quick prototypes or if you're just starting, JavaScript is fine—you can always migrate to TypeScript incrementally later.",
+        "TypeScript is highly recommended for portfolios you\u2019ll maintain long-term. The initial learning curve pays off quickly through error prevention, better IDE support, and self-documenting code. For quick prototypes or if you\u2019re just starting, JavaScript is fine\u2014you can always migrate to TypeScript incrementally later.",
     },
     {
       question: "Why choose Next.js over Create React App or Gatsby?",

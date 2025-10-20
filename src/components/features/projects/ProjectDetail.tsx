@@ -140,6 +140,7 @@ export function ProjectDetail({ project, htmlContent }: ProjectDetailProps) {
                     src={project.image}
                     alt={`${project.title} screenshot`}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 66vw, 50vw"
                     className="object-cover"
                     priority
                     onError={(e) => {

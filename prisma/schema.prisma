@@ -160,6 +160,7 @@ model Tag {
 
   blogs    Blog[]
   projects Project[]
+  images   Image[]
 
   @@index([slug])
   @@map("tags")
@@ -225,6 +226,7 @@ model Image {
   blog      Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
   projectId String?
   project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tags      Tag[]
 
   @@index([blogId])
   @@index([projectId])

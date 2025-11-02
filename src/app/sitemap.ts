@@ -2,6 +2,7 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 import { logError } from '@/lib/logger';
+import { getSiteUrl } from '@/lib/utils/canonical';
 
 // Force dynamic rendering since this requires database access
 export const dynamic = 'force-dynamic';
@@ -17,7 +18,7 @@ export const dynamic = 'force-dynamic';
  * Revalidates every 24 hours to keep search engines updated
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://olliedoesis.vercel.app';
+  const baseUrl = getSiteUrl();
 
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [

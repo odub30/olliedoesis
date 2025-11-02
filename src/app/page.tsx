@@ -204,7 +204,7 @@ export default function HomePage() {
                     <span>View Code</span>
                   </a>
                   <a
-                    href="https://olliedoesis.vercel.app"
+                    href="https://olliedoesis.dev"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center text-white hover:text-carolina transition-colors"

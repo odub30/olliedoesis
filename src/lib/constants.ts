@@ -1,7 +1,7 @@
 // src/lib/constants.ts
 export const SITE_NAME = 'Ollie Does Is';
 export const SITE_DESCRIPTION = 'Web Developer & Security Enthusiast';
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://olliedoesis.vercel.app';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://olliedoesis.dev';
 export const GITHUB_USERNAME = process.env.NEXT_PUBLIC_GITHUB_USERNAME || 'odub30';
 export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || '702seopro@gmail.com';
 

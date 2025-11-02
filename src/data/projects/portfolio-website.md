@@ -6,7 +6,7 @@ status: "completed"
 featured: true
 image: "/images/projects/full/portfolio-website.webp"
 github: "https://github.com/odub30/olliedoesis"
-live: "https://olliedoesis.vercel.app"
+live: "https://olliedoesis.dev"
 tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel"]
 category: "Web Development"
 highlights:

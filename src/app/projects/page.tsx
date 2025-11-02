@@ -1,10 +1,17 @@
 // src/app/projects/page.tsx
 import { getProjects } from '@/lib/projects';
 import { ProjectsGrid } from '@/components/features/projects/ProjectsGrid';
+import { getCanonicalUrl } from '@/lib/utils/canonical';
 
 export const metadata = {
   title: 'Projects | Ollie Does',
   description: 'Explore my portfolio of web development projects built with modern technologies like Next.js, React, TypeScript, and more.',
+  alternates: {
+    canonical: getCanonicalUrl('projects'),
+  },
+  openGraph: {
+    url: getCanonicalUrl('projects'),
+  },
 };
 
 export default async function ProjectsPage() {

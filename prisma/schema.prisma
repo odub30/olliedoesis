@@ -145,6 +145,7 @@ model Category {
 
   blogs    Blog[]
   projects Project[]
+  images   Image[]
 
   @@index([slug])
   @@map("categories")
@@ -209,27 +210,39 @@ model Project {
 }
 
 model Image {
-  id        String   @id @default(cuid())
-  url       String
-  alt       String?
-  caption   String?
-  width     Int?
-  height    Int?
-  size      Int?     // File size in bytes
-  format    String?  // jpg, png, webp, etc.
-  blurHash  String?  // For blur placeholder
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  url         String
+  filename    String?  // Original filename
+
+  // Metadata fields
+  title       String?  // User-friendly title
+  alt         String?  // Alt text for accessibility
+  description String?  @db.Text  // Detailed description/caption
+  caption     String?  // Short caption (kept for backwards compatibility)
+
+  // File properties
+  width       Int?
+  height      Int?
+  size        Int?     // File size in bytes
+  format      String?  // jpg, png, webp, etc.
+  mimeType    String?  // MIME type (image/jpeg, etc.)
+  blurHash    String?  // For blur placeholder
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relations (polymorphic-style)
-  blogId    String?
-  blog      Blog?    @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  projectId String?
-  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tags      Tag[]
+  blogId     String?
+  blog       Blog?     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags       Tag[]
 
   @@index([blogId])
   @@index([projectId])
+  @@index([categoryId])
   @@map("images")
 }
 

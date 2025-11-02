@@ -1,8 +1,9 @@
 // src/app/robots.ts
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '@/lib/utils/canonical';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://olliedoesis.dev';
+  const baseUrl = getSiteUrl();
 
   return {
     rules: {

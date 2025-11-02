@@ -5,6 +5,7 @@ import { ProjectDetail } from '@/components/features/projects/ProjectDetail';
 import { marked } from 'marked';
 import { prisma } from '@/lib/prisma';
 import { logDebug } from "@/lib/logger";
+import { getCanonicalUrl } from '@/lib/utils/canonical';
 
 // Force dynamic rendering since this page requires database access
 export const dynamic = 'force-dynamic';
@@ -28,13 +29,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     };
   }
 
+  const canonicalUrl = getCanonicalUrl(`projects/${project.slug}`);
+
   return {
     title: `${project.title} | Projects | Ollie Does`,
     description: project.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: project.title,
       description: project.description,
       images: project.image ? [project.image] : [],
+      url: canonicalUrl,
     },
   };
 }

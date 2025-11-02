@@ -1,5 +1,21 @@
 // src/app/about/page.tsx
 import { Code, Shield, Laptop, BookOpen, Award, MapPin } from 'lucide-react';
+import { getCanonicalUrl } from '@/lib/utils/canonical';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About | Ollie Does Is',
+  description: 'Learn more about Ollie Does Is - Web Developer & Cybersecurity Student based in Henderson, Nevada. Passionate about creating secure, user-friendly digital experiences.',
+  alternates: {
+    canonical: getCanonicalUrl('about'),
+  },
+  openGraph: {
+    title: 'About | Ollie Does Is',
+    description: 'Learn more about Ollie Does Is - Web Developer & Cybersecurity Student based in Henderson, Nevada.',
+    type: 'website',
+    url: getCanonicalUrl('about'),
+  },
+};
 
 export default function AboutPage() {
   return (

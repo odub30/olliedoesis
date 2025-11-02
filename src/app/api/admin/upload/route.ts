@@ -109,6 +109,8 @@ export async function POST(request: NextRequest) {
 
     // Get optional metadata from form
     const alt = (formData.get("alt") as string) || file.name;
+    const title = (formData.get("title") as string) || null;
+    const description = (formData.get("description") as string) || null;
     const caption = (formData.get("caption") as string) || null;
     const projectId = (formData.get("projectId") as string) || undefined;
     const blogId = (formData.get("blogId") as string) || undefined;
@@ -116,24 +118,35 @@ export async function POST(request: NextRequest) {
     // Get file extension for format
     const format = file.name.split(".").pop()?.toLowerCase() || null;
 
+    // Extract filename without path
+    const filename = file.name;
+
     // Prepare data for database
     const imageData: {
       url: string;
+      filename: string;
+      title: string | null;
       alt: string;
+      description: string | null;
       caption: string | null;
       width: number | null;
       height: number | null;
       format: string | null;
+      mimeType: string;
       size: number;
       projectId?: string;
       blogId?: string;
     } = {
       url: blob.url,
+      filename,
+      title: title || file.name.replace(/\.[^/.]+$/, ""), // Default to filename without extension
       alt,
+      description,
       caption,
       width: null, // Could be extracted from image metadata if needed
       height: null, // Could be extracted from image metadata if needed
       format,
+      mimeType: file.type,
       size: file.size,
     };
 
@@ -286,7 +299,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, alt, caption, tagIds } = body;
+    const { id, title, alt, description, caption, tagIds } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -309,13 +322,23 @@ export async function PUT(request: NextRequest) {
 
     // Prepare update data
     const updateData: {
+      title?: string | null;
       alt?: string;
+      description?: string | null;
       caption?: string | null;
       tags?: { set: Array<{ id: string }> };
     } = {};
 
+    if (title !== undefined) {
+      updateData.title = title || null;
+    }
+
     if (alt !== undefined) {
       updateData.alt = alt;
+    }
+
+    if (description !== undefined) {
+      updateData.description = description || null;
     }
 
     if (caption !== undefined) {
@@ -333,6 +356,15 @@ export async function PUT(request: NextRequest) {
     const image = await prisma.image.update({
       where: { id },
       data: updateData,
+      include: {
+        tags: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({

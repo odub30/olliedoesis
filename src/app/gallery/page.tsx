@@ -6,11 +6,17 @@ import Image from "next/image";
 import { Camera, X, Search, Grid3x3, Grid2x2, Download, ExternalLink, Loader2 } from "lucide-react";
 import { logError } from "@/lib/logger";
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
+import { GalleryImageCard } from "@/components/gallery/GalleryImageCard";
+import { ImageMetadataDialog, type ImageMetadata } from "@/components/gallery/ImageMetadataDialog";
+import { useSession } from "next-auth/react";
 
 interface GalleryImage {
   id: string;
   url: string;
-  alt: string;
+  filename?: string | null;
+  title?: string | null;
+  description?: string | null;
+  alt: string | null;
   caption: string | null;
   width: number | null;
   height: number | null;
@@ -23,12 +29,16 @@ interface GalleryImage {
 const IMAGES_PER_PAGE = 12;
 
 export default function GalleryPage() {
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === "ADMIN";
+
   const [allImages, setAllImages] = useState<GalleryImage[]>([]);
   const [displayedImages, setDisplayedImages] = useState<GalleryImage[]>([]);
   const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [gridSize, setGridSize] = useState<2 | 3>(3);
@@ -75,6 +85,44 @@ export default function GalleryPage() {
     fetchImages();
   }, []);
 
+  // Handle metadata save
+  const handleSaveMetadata = async (imageId: string, metadata: ImageMetadata) => {
+    try {
+      const response = await fetch(`/api/admin/images/${imageId}/metadata`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(metadata),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update metadata");
+      }
+
+      const { image: updatedImage } = await response.json();
+
+      // Update the image in all states
+      setAllImages((prev) =>
+        prev.map((img) => (img.id === imageId ? { ...img, ...updatedImage } : img))
+      );
+      setFilteredImages((prev) =>
+        prev.map((img) => (img.id === imageId ? { ...img, ...updatedImage } : img))
+      );
+      setDisplayedImages((prev) =>
+        prev.map((img) => (img.id === imageId ? { ...img, ...updatedImage } : img))
+      );
+
+      // Update selected image if it's the one being edited
+      if (selectedImage?.id === imageId) {
+        setSelectedImage({ ...selectedImage, ...updatedImage });
+      }
+    } catch (error) {
+      logError("Failed to save image metadata", error);
+      throw error;
+    }
+  };
+
   // Filter images based on search and tag
   useEffect(() => {
     let filtered = allImages;
@@ -90,8 +138,11 @@ export default function GalleryPage() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(img =>
-        img.alt.toLowerCase().includes(query) ||
+        img.title?.toLowerCase().includes(query) ||
+        img.alt?.toLowerCase().includes(query) ||
+        img.description?.toLowerCase().includes(query) ||
         img.caption?.toLowerCase().includes(query) ||
+        img.filename?.toLowerCase().includes(query) ||
         img.tags.some(tag => tag.name.toLowerCase().includes(query))
       );
     }
@@ -471,94 +522,15 @@ export default function GalleryPage() {
                 }`}
               >
                 {displayedImages.map((image, index) => (
-                  <m.div
+                  <GalleryImageCard
                     key={image.id}
-                    variants={itemVariants}
-                    whileHover={{
-                      y: -8,
-                      transition: { duration: 0.3 },
-                    }}
-                    className="group relative bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transition-shadow duration-300 hover:shadow-2xl"
-                    onClick={() => openLightbox(image)}
-                  >
-                    {/* Image */}
-                    <div className="relative aspect-square bg-gray-100 overflow-hidden">
-                      <m.div
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.4 }}
-                        className="w-full h-full"
-                      >
-                        <Image
-                          src={image.url}
-                          alt={image.alt}
-                          fill
-                          className="object-cover"
-                          sizes={gridSize === 2 ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"}
-                          unoptimized
-                        />
-                      </m.div>
-                      {/* Overlay */}
-                      <m.div
-                        initial={{ opacity: 0 }}
-                        whileHover={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                        className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
-                      >
-                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                          <m.p
-                            initial={{ y: 20, opacity: 0 }}
-                            whileHover={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.1 }}
-                            className="font-semibold text-lg mb-1 line-clamp-2"
-                          >
-                            {image.alt}
-                          </m.p>
-                          {image.caption && (
-                            <m.p
-                              initial={{ y: 20, opacity: 0 }}
-                              whileHover={{ y: 0, opacity: 1 }}
-                              transition={{ delay: 0.15 }}
-                              className="text-sm text-gray-200 line-clamp-2"
-                            >
-                              {image.caption}
-                            </m.p>
-                          )}
-                        </div>
-                        <m.div
-                          initial={{ scale: 0, rotate: -90 }}
-                          whileHover={{ scale: 1, rotate: 0 }}
-                          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-                          className="absolute top-4 right-4"
-                        >
-                          <ExternalLink className="h-6 w-6 text-white" />
-                        </m.div>
-                      </m.div>
-                    </div>
-
-                    {/* Tags */}
-                    {image.tags.length > 0 && (
-                      <div className="p-4 bg-white">
-                        <div className="flex flex-wrap gap-2">
-                          {image.tags.slice(0, 3).map((tag, tagIndex) => (
-                            <m.span
-                              key={tag.id}
-                              initial={{ opacity: 0, scale: 0 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              transition={{ delay: index * 0.05 + tagIndex * 0.05 }}
-                              className="inline-block px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
-                            >
-                              {tag.name}
-                            </m.span>
-                          ))}
-                          {image.tags.length > 3 && (
-                            <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                              +{image.tags.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </m.div>
+                    image={image}
+                    onEdit={isAdmin ? setEditingImage : undefined}
+                    onView={() => openLightbox(image)}
+                    gridSize={gridSize}
+                    isAdmin={isAdmin}
+                    index={index}
+                  />
                 ))}
               </m.div>
 
@@ -595,6 +567,14 @@ export default function GalleryPage() {
             </>
           )}
         </section>
+
+        {/* Metadata Edit Dialog */}
+        <ImageMetadataDialog
+          image={editingImage}
+          open={!!editingImage}
+          onClose={() => setEditingImage(null)}
+          onSave={handleSaveMetadata}
+        />
 
         {/* Lightbox Modal */}
         <AnimatePresence>
@@ -672,7 +652,7 @@ export default function GalleryPage() {
                   >
                     <Image
                       src={selectedImage.url}
-                      alt={selectedImage.alt}
+                      alt={selectedImage.alt || selectedImage.title || selectedImage.filename || "Image"}
                       width={selectedImage.width || 1200}
                       height={selectedImage.height || 800}
                       className="max-w-full max-h-[80vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
@@ -688,8 +668,13 @@ export default function GalleryPage() {
                   transition={{ delay: 0.2 }}
                   className="mt-6 bg-white/10 backdrop-blur-md rounded-lg p-6 border border-white/20"
                 >
-                  <h3 className="text-xl font-bold text-white mb-2">{selectedImage.alt}</h3>
-                  {selectedImage.caption && (
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {selectedImage.title || selectedImage.alt || selectedImage.filename || "Untitled"}
+                  </h3>
+                  {selectedImage.description && (
+                    <p className="text-gray-200 mb-4">{selectedImage.description}</p>
+                  )}
+                  {selectedImage.caption && !selectedImage.description && (
                     <p className="text-gray-200 mb-4">{selectedImage.caption}</p>
                   )}
 

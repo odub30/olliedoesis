@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import { BlogsList } from "@/components/blog/blogs-list";
+import { getCanonicalUrl } from "@/lib/utils/canonical";
 
 // Force dynamic rendering since this page requires database access
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,12 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: "Blog | Ollie Doesis",
   description: "Articles and insights on web development, cybersecurity, and technology.",
+  alternates: {
+    canonical: getCanonicalUrl('blogs'),
+  },
+  openGraph: {
+    url: getCanonicalUrl('blogs'),
+  },
 };
 
 type BlogTag = {

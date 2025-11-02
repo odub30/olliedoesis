@@ -10,6 +10,7 @@ import { getBlogFAQs } from "@/data/blog-faqs";
 import { BlogFAQSection } from "@/components/blog/BlogFAQSection";
 import { CodeBlock } from "@/components/code-block";
 import { RelatedPosts } from "@/components/blog/RelatedPosts";
+import { getCanonicalUrl } from "@/lib/utils/canonical";
 import type { TagEntry } from '@/types/db'
 
 // Force dynamic rendering since this page requires database access
@@ -201,6 +202,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     };
   }
 
+  const canonicalUrl = getCanonicalUrl(`blogs/${blog.slug}`);
+
   return {
     title: `${blog.title} | Ollie Doesis`,
     description: blog.excerpt || blog.title,
@@ -214,6 +217,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       modifiedTime: blog.updatedAt.toISOString(),
       authors: blog.author.name ? [blog.author.name] : undefined,
       tags: blog.tags.map((tag) => tag.name),
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
@@ -221,7 +225,7 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
       description: blog.excerpt || blog.title,
     },
     alternates: {
-      canonical: `https://olliedoesis.dev/blogs/${blog.slug}`,
+      canonical: canonicalUrl,
     },
   };
 }
